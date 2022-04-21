@@ -102,6 +102,17 @@ architecture riscv_arc of riscv is
          );
     end component;
 
+    component register_data_register is
+        port(
+             we : in std_logic;
+             rs_1_input : in std_logic_vector(31 downto 0);
+             rs_2_input : in std_logic_vector(31 downto 0);
+             clk : in std_logic;
+             rs_1_output : out std_logic_vector(31 downto 0);
+             rs_2_output : out std_logic_vector(31 downto 0)
+            );
+    end component;
+
 --------------------------------------------------------------------------
 -- Declaracao de sinais --------------------------------------------------
 --------------------------------------------------------------------------
@@ -137,13 +148,13 @@ architecture riscv_arc of riscv is
     -- Control ----
     ---------------
 
-    signal sc_IorD : std_logic;
-    signal sc_WE_data : std_logic;
+    signal sc_IorD : std_logic := '1';
+    signal sc_WE_data : std_logic := '1';
     signal sc_WE_instruction_reg : std_logic := '1';
-    signal sc_WE_data_reg : std_logic;
-    signal sc_WE_reg_file : std_logic;
-    signal sc_WE_register_data_reg : std_logic;
-    signal sc_PoR : std_logic;
+    signal sc_WE_data_reg : std_logic := '1';
+    signal sc_WE_reg_file : std_logic := '1';
+    signal sc_WE_register_data_reg : std_logic := '1';
+    signal sc_PoR : std_logic := '0';
     signal sc_alu_Bmux : std_logic_vector(1 downto 0);
 
     -----------------------
