@@ -17,6 +17,17 @@ architecture riscv_arc of riscv is
 -- Declaracao de componentes ---------------------------------------------
 --------------------------------------------------------------------------
 
+    component register_block is
+
+        port(
+             we : in std_logic;
+             next_input : in std_logic_vector(31 downto 0);
+             clk : in std_logic;
+             last_input : out std_logic_vector(31 downto 0)
+            );
+
+    end component;
+
     component pc is
         generic (
             PC_WIDTH : natural := 12
@@ -71,24 +82,25 @@ architecture riscv_arc of riscv is
     ---------------
 
     signal s_instruction : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+    signal s_stored_instruction : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
 
     -- parsing de instrucao
 
     -- imediato
 
-    signal s_immediate : std_logic_vector(11 downto 0) := s_instruction(31 downto 20);
+    signal s_immediate : std_logic_vector(11 downto 0) := s_stored_instruction(31 downto 20);
 
     -- endereços de registradores
 
-    signal s_rs1 : std_logic_vector(4 downto 0) := s_instruction(19 downto 15);
-    signal s_rs2 : std_logic_vector(4 downto 0) := s_instruction(24 downto 20);
-    signal s_rd : std_logic_vector(4 downto 0) := s_instruction(11 downto 7);
+    signal s_rs1 : std_logic_vector(4 downto 0) := s_stored_instruction(19 downto 15);
+    signal s_rs2 : std_logic_vector(4 downto 0) := s_stored_instruction(24 downto 20);
+    signal s_rd : std_logic_vector(4 downto 0) := s_stored_instruction(11 downto 7);
 
     -- opcode e functs (controle)
 
-    signal s_opcode : std_logic_vector(6 downto 0) := s_instruction(6 downto 0);
-    signal s_funct7 : std_logic_vector(6 downto 0) := s_instruction(31 downto 25);
-    signal s_funct3 : std_logic_vector(2 downto 0) := s_instruction(14 downto 12);
+    signal s_opcode : std_logic_vector(6 downto 0) := s_stored_instruction(6 downto 0);
+    signal s_funct7 : std_logic_vector(6 downto 0) := s_stored_instruction(31 downto 25);
+    signal s_funct3 : std_logic_vector(2 downto 0) := s_stored_instruction(14 downto 12);
 
     ---------------
     -- Control ----
@@ -96,7 +108,7 @@ architecture riscv_arc of riscv is
 
     signal sc_IorD : std_logic;
     signal sc_WE_data : std_logic;
-    signal sc_WE_instruction_reg : std_logic;
+    signal sc_WE_instruction_reg : std_logic := '1';
     signal sc_WE_data_reg : std_logic;
     signal sc_WE_reg_file : std_logic;
     signal sc_WE_register_data_reg : std_logic;
@@ -152,5 +164,22 @@ architecture riscv_arc of riscv is
             address => s_current_instruction_address,
             instruction => s_instruction
             );
+
+    -- signal sc_WE_instruction_reg : std_logic;
+    -- signal sc_WE_data_reg : std_logic;
+
+    u_instruction_register: register_block port map(
+                                                    we => sc_WE_instruction_reg,
+                                                    next_input => s_instruction,
+                                                    clk => clk,
+                                                    last_input => s_stored_instruction
+                                                    );
+
+   --  u_data_register: register_block port map(
+   --                                                 we : sc_WE_instruction_reg,
+   --                                                 next_input : s_instruction
+   --                                                clk : clk,
+   --                                               last_input : s_instruction
+   --                                             );
 
 end riscv_arc;
