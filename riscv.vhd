@@ -166,10 +166,10 @@ architecture riscv_arc of riscv is
     signal s_rs_1_data : std_logic_vector(31 downto 0);
     signal s_rs_2_data : std_logic_vector(31 downto 0);
     signal s_reg_file_write_data : std_logic_vector(31 downto 0);
-    
+
     -- ALU --
 
-    -- Entrada A 
+    -- Entrada A
 
         -- Entradas Mux
 
