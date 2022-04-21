@@ -52,7 +52,6 @@ architecture riscv_arc of riscv is
         );
     end component;
 
-
     component instruction_memory is
 
         port(
@@ -146,6 +145,8 @@ architecture riscv_arc of riscv is
     signal s_rs_2_data : std_logic_vector(31 downto 0);
     signal s_reg_file_write_data : std_logic_vector(31 downto 0);
     signal s_alu_in_imm : std_logic_vector(31 downto 0);
+    signal s_alu_in_rs_1 : std_logic_vector(31 downto 0);
+    signal s_alu_in_rs_2 : std_logic_vector(31 downto 0);
 
     -- dead
 
@@ -214,12 +215,15 @@ architecture riscv_arc of riscv is
                                              rs_2_data => s_rs_2_data
                                             );
 
-    u_register_data_register: register_block port map(
-                                                       we => sc_WE_instruction_reg,
-                                                       next_input => s_instruction,
-                                                       clk => clk,
-                                                       last_input => s_stored_instruction
-                                                     );
+    u_register_data_register: register_data_register port map(
+                                                              we => sc_WE_register_data_reg,
+                                                              rs_1_input => rs_1_data,
+                                                              rs_2_input => rs_1_data,
+                                                              clk => clk,
+                                                              rs_1_output => s_alu_in_rs_1,
+                                                              rs_2_output => s_alu_in_rs_2
+                                                             );
+
 
     u_sign_extender: signex port map(
                                      signex_in => s_stored_instruction(31 downto 20),
