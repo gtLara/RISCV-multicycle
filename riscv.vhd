@@ -13,9 +13,9 @@ end riscv;
 
 architecture riscv_arc of riscv is
 
---------------------------------------------------------------------------
--- Declaracao de componentes ---------------------------------------------
---------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Declaracao de componentes --------------------------------------------------
+-------------------------------------------------------------------------------
 
     component register_block is
 
@@ -74,6 +74,24 @@ architecture riscv_arc of riscv is
         );
     end component;
 
+    component register_file is
+        port(
+             rs_1, rs_2, rd : in std_logic_vector(4 downto 0);
+             clk : in std_logic;
+             we : in std_logic;
+             write_data : in std_logic_vector(31 downto 0);
+             rs_1_data, rs_2_data : out std_logic_vector(31 downto 0)
+            );
+    end component;
+
+    component signex is
+        generic(size: integer := 11); -- na verdade é tamanho - 1
+        port(
+             signex_in: in std_logic_vector(size downto 0);
+             signex_out: out std_logic_vector(31 downto 0)
+         );
+    end component;
+
 --------------------------------------------------------------------------
 -- Declaracao de sinais --------------------------------------------------
 --------------------------------------------------------------------------
@@ -81,10 +99,13 @@ architecture riscv_arc of riscv is
     -- Instrucao --
     ---------------
 
-    signal s_instruction : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
-    signal s_stored_instruction : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+    signal s_instruction : std_logic_vector(31 downto 0);
+    signal s_stored_instruction : std_logic_vector(31 downto 0);
 
-    -- parsing de instrucao
+    -- parsing de instrucao:
+    -- o parsing da instrucao nesse momento é feito apenas para referência.
+    -- o verdadeiro parsing a nível de hardware acontece na instanciação dos
+    -- componentes.
 
     -- imediato
 
@@ -92,15 +113,15 @@ architecture riscv_arc of riscv is
 
     -- endereços de registradores
 
-    signal s_rs1 : std_logic_vector(4 downto 0) := s_stored_instruction(19 downto 15);
-    signal s_rs2 : std_logic_vector(4 downto 0) := s_stored_instruction(24 downto 20);
-    signal s_rd : std_logic_vector(4 downto 0) := s_stored_instruction(11 downto 7);
+    signal s_rs1 : std_logic_vector(4 downto 0) := s_instruction(19 downto 15);
+    signal s_rs2 : std_logic_vector(4 downto 0) := s_instruction(24 downto 20);
+    signal s_rd : std_logic_vector(4 downto 0) := s_instruction(11 downto 7);
 
     -- opcode e functs (controle)
 
-    signal s_opcode : std_logic_vector(6 downto 0) := s_stored_instruction(6 downto 0);
-    signal s_funct7 : std_logic_vector(6 downto 0) := s_stored_instruction(31 downto 25);
-    signal s_funct3 : std_logic_vector(2 downto 0) := s_stored_instruction(14 downto 12);
+    signal s_opcode : std_logic_vector(6 downto 0) := s_instruction(6 downto 0);
+    signal s_funct7 : std_logic_vector(6 downto 0) := s_instruction(31 downto 25);
+    signal s_funct3 : std_logic_vector(2 downto 0) := s_instruction(14 downto 12);
 
     ---------------
     -- Control ----
@@ -121,7 +142,10 @@ architecture riscv_arc of riscv is
 
     signal s_next_instruction_address : std_logic_vector(11 downto 0);
     signal s_current_instruction_address : std_logic_vector(11 downto 0);
-    signal s_memory_data : std_logic_vector(31 downto 0);
+    signal s_rs_1_data : std_logic_vector(31 downto 0);
+    signal s_rs_2_data : std_logic_vector(31 downto 0);
+    signal s_reg_file_write_data : std_logic_vector(31 downto 0);
+    signal s_alu_in_imm : std_logic_vector(31 downto 0);
 
     -- dead
 
@@ -165,21 +189,41 @@ architecture riscv_arc of riscv is
             instruction => s_instruction
             );
 
-    -- signal sc_WE_instruction_reg : std_logic;
-    -- signal sc_WE_data_reg : std_logic;
-
     u_instruction_register: register_block port map(
                                                     we => sc_WE_instruction_reg,
                                                     next_input => s_instruction,
                                                     clk => clk,
                                                     last_input => s_stored_instruction
-                                                    );
+                                                   );
 
-   --  u_data_register: register_block port map(
-   --                                                 we : sc_WE_instruction_reg,
-   --                                                 next_input : s_instruction
-   --                                                clk : clk,
-   --                                               last_input : s_instruction
-   --                                             );
+    u_data_register: register_block port map(
+                                            we => sc_WE_instruction_reg,
+                                            next_input => s_stored_instruction,
+                                            clk => clk,
+                                            last_input => s_reg_file_write_data
+                                            );
+
+    u_register_file: register_file port map(
+                                             rs_1 => s_stored_instruction(19 downto 15),
+                                             rs_2 => s_stored_instruction(24 downto 20),
+                                             rd => s_stored_instruction(11 downto 7),
+                                             clk => clk,
+                                             we => sc_WE_reg_file,
+                                             write_data => s_reg_file_write_data,
+                                             rs_1_data => s_rs_1_data,
+                                             rs_2_data => s_rs_2_data
+                                            );
+
+    u_register_data_register: register_block port map(
+                                                       we => sc_WE_instruction_reg,
+                                                       next_input => s_instruction,
+                                                       clk => clk,
+                                                       last_input => s_stored_instruction
+                                                     );
+
+    u_sign_extender: signex port map(
+                                     signex_in => s_stored_instruction(31 downto 20),
+                                     signex_out => s_alu_in_imm
+                                    );
 
 end riscv_arc;
