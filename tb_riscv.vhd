@@ -26,8 +26,8 @@ architecture tb of tb_riscv is
     constant clock_frequency : integer := 10e6; -- 10Mhz
     constant clock_period : time := 1000 ms /clock_frequency;
 
-    signal clk : std_logic := '1';
-    signal set : std_logic := '0';
+    signal clk : std_logic := '0';
+    signal set : std_logic := '1';
 
 
 --------------------------------------------------------------------------
@@ -52,7 +52,9 @@ architecture tb of tb_riscv is
 
         begin
 
-        wait for 2*clock_period;
+        wait for clock_period;
+
+        set <= '0';
 
     end process testbench;
 

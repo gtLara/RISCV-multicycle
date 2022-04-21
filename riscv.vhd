@@ -56,6 +56,19 @@ architecture riscv_arc of riscv is
         );
     end component;
 
+
+    component somador is
+        generic (
+            largura_dado : natural := 12
+        );
+
+        port (
+            entrada_a : in std_logic_vector((largura_dado - 1) downto 0);
+            entrada_b : in std_logic_vector((largura_dado - 1) downto 0);
+            saida     : out std_logic_vector((largura_dado - 1) downto 0)
+        );
+    end component;
+
 --------------------------------------------------------------------------
 -- Declaracao de sinais --------------------------------------------------
 --------------------------------------------------------------------------
@@ -63,7 +76,7 @@ architecture riscv_arc of riscv is
     -- Instrucao --
     ---------------
 
-    signal s_instruction : std_logic_vector(31 downto 0);
+    signal s_instruction : std_logic_vector(31 downto 0) := "00000000000000011010111110000011";
 
     -- parsing de instrucao
 
@@ -99,23 +112,24 @@ architecture riscv_arc of riscv is
     -----------------------
     -- Datapath signals ---
     -----------------------
-    
-    signal s_next_instruction_address : std_logic_vector(11 downto 0);
-    signal s_current_instruction_address : std_logic_vector(11 downto 0) := (others => '0');
+
+    signal s_next_instruction_address : std_logic_vector(11 downto 0) := "000000000000";
+    signal s_current_instruction_address : std_logic_vector(11 downto 0) := "000000000000";
     signal s_memory_data : std_logic_vector(31 downto 0);
 
     -- dead
 
-    signal d_we : std_logic := '0';
+    signal d_we : std_logic := '1';
     signal d_reset : std_logic := '0';
     signal d_mem : std_logic := '0';
-    signal d_mem_vec : std_logic_vector(31 downto 0);
+    signal d_mem_vec : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+    signal d_adder : std_logic_vector(11 downto 0) := "000000000100";
 
 
 --------------------------------------------------------------------------
 -- Definicao de datapath -------------------------------------------------
 --------------------------------------------------------------------------
-    
+
     begin
 
 --------------------------------------------------------------------------
@@ -127,16 +141,22 @@ architecture riscv_arc of riscv is
                                    entrada => s_next_instruction_address,
                                    saida => s_current_instruction_address,
                                    we =>  d_we,
-                                   reset => d_reset
+                                   reset => set
                                    );
 
-    u_memory: memory port map(
-                             clk => clk,
-                             mem_write => sc_WE_data,
-                             mem_read => d_mem,
-                             write_data_mem => d_mem_vec,
-                             adress_mem => s_current_instruction_address,
-                             read_data_mem => s_memory_data
-                             );
+    u_pc_adder: somador port map(
+                                entrada_a => s_current_instruction_address,
+                                entrada_b => d_adder,
+                                saida => s_next_instruction_address
+                                );
+
+    -- u_memory: memory port map(
+     --                        clk => clk,
+       --                      mem_write => sc_WE_data,
+         --                    mem_read => d_mem,
+           --                  write_data_mem => d_mem_vec,
+             --                adress_mem => s_current_instruction_address,
+               --              read_data_mem => s_memory_data
+                 --            );
 
 end riscv_arc;
