@@ -29,7 +29,7 @@ entity memory is
 architecture comportamental of memory is
         --alocar espaço para a memoria e iniciar com 0
         type data_mem is array (0 to number_of_words - 1) of std_logic_vector(MD_DATA_WIDTH - 1 downto 0);
-        signal ram  : data_mem := (others => (others => '0'));
+        signal ram  : data_mem ;
         signal ram_addr : std_logic_vector(MD_ADDR_WIDTH - 1 downto 0);
 
         file program : text open read_mode is "program.txt"; -- cria arquivo

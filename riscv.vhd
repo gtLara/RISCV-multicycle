@@ -41,21 +41,30 @@ architecture riscv_arc of riscv is
         );
     end component;
 
-    component memory is
-        generic (
-            number_of_words : natural := 3008; -- número de words que a sua memória é capaz de armazenar
-            MD_DATA_WIDTH   : natural := 32; -- tamanho da palavra em bits
-            MD_ADDR_WIDTH   : natural := 12 -- tamanho do endereco da memoria de dados em bits
-        );
-        port (
-            clk                 : in std_logic;
-            set                 : in std_logic;
-            mem_write, mem_read : in std_logic; --sinais do controlador
-            write_data_mem      : in std_logic_vector(MD_DATA_WIDTH - 1 downto 0);
-            adress_mem          : in std_logic_vector(MD_ADDR_WIDTH - 1 downto 0);
-            read_data_mem       : out std_logic_vector(MD_DATA_WIDTH - 1 downto 0)
-        );
+
+    component instruction_memory is
+
+        port(
+                set : in std_logic; -- sinal para carregamento de progrma
+                address : in std_logic_vector(11 downto 0);
+                instruction : out std_logic_vector(31 downto 0));
+
     end component;
+    --component memory is
+    --    generic (
+    --        number_of_words : natural := 3008; -- número de words que a sua memória é capaz de armazenar
+    --        MD_DATA_WIDTH   : natural := 32; -- tamanho da palavra em bits
+    --        MD_ADDR_WIDTH   : natural := 12 -- tamanho do endereco da memoria de dados em bits
+    --    );
+    --    port (
+    --        clk                 : in std_logic;
+    --        set                 : in std_logic;
+    --        mem_write, mem_read : in std_logic; --sinais do controlador
+    --        write_data_mem      : in std_logic_vector(MD_DATA_WIDTH - 1 downto 0);
+    --        adress_mem          : in std_logic_vector(MD_ADDR_WIDTH - 1 downto 0);
+    --        read_data_mem       : out std_logic_vector(MD_DATA_WIDTH - 1 downto 0)
+    --    );
+    --end component;
 
 
     component somador is
@@ -154,14 +163,20 @@ architecture riscv_arc of riscv is
                                 saida => s_next_instruction_address
                                 );
 
-     u_memory: memory port map(
-                             clk => clk,
-                             set => set,
-                             mem_write => d_we_2,
-                             mem_read => d_mem,
-                             write_data_mem => d_mem_vec,
-                             adress_mem => s_current_instruction_address,
-                             read_data_mem => s_memory_data
-                             );
+     --u_memory: memory port map(
+     --                        clk => clk,
+     --                        set => set,
+     --                        mem_write => d_we_2,
+     --                        mem_read => d_mem,
+     --                        write_data_mem => d_mem_vec,
+     --                        adress_mem => s_current_instruction_address,
+     --                        read_data_mem => s_memory_data
+     --                        );
+
+    u_instruction_memory: instruction_memory port map(
+            set => set, -- sinal para carregamento de progrma
+            address => s_current_instruction_address,
+            instruction => s_instruction
+            );
 
 end riscv_arc;
