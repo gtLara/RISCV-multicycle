@@ -51,10 +51,8 @@ architecture tb of tb_riscv is
     testbench: process
 
         begin
-
-        wait for clock_period;
-
         set <= '0';
+        wait for clock_period;
 
     end process testbench;
 

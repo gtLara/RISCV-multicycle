@@ -7,6 +7,9 @@ use ieee.std_logic_1164.all;
 use IEEE.STD_LOGIC_TEXTIO.ALL;
 use ieee.numeric_std.all;
 
+library STD;
+use STD.TEXTIO.ALL;
+
 entity memory is
     generic (
         number_of_words : natural := 3008; -- número de words que a sua memória é capaz de armazenar
@@ -15,6 +18,7 @@ entity memory is
     );
     port (
         clk                 : in std_logic;
+        set                 : in std_logic;
         mem_write, mem_read : in std_logic; --sinais do controlador
         write_data_mem      : in std_logic_vector(MD_DATA_WIDTH - 1 downto 0);
         adress_mem          : in std_logic_vector(MD_ADDR_WIDTH - 1 downto 0);

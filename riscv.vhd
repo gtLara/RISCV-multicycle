@@ -49,6 +49,7 @@ architecture riscv_arc of riscv is
         );
         port (
             clk                 : in std_logic;
+            set                 : in std_logic;
             mem_write, mem_read : in std_logic; --sinais do controlador
             write_data_mem      : in std_logic_vector(MD_DATA_WIDTH - 1 downto 0);
             adress_mem          : in std_logic_vector(MD_ADDR_WIDTH - 1 downto 0);
@@ -121,7 +122,10 @@ architecture riscv_arc of riscv is
 
     signal d_we : std_logic := '1';
     signal d_reset : std_logic := '0';
+
     signal d_mem : std_logic := '0';
+    signal d_we_2 : std_logic := '0';
+
     signal d_mem_vec : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
     signal d_adder : std_logic_vector(11 downto 0) := "000000000100";
 
@@ -150,13 +154,14 @@ architecture riscv_arc of riscv is
                                 saida => s_next_instruction_address
                                 );
 
-    -- u_memory: memory port map(
-     --                        clk => clk,
-       --                      mem_write => sc_WE_data,
-         --                    mem_read => d_mem,
-           --                  write_data_mem => d_mem_vec,
-             --                adress_mem => s_current_instruction_address,
-               --              read_data_mem => s_memory_data
-                 --            );
+     u_memory: memory port map(
+                             clk => clk,
+                             set => set,
+                             mem_write => d_we_2,
+                             mem_read => d_mem,
+                             write_data_mem => d_mem_vec,
+                             adress_mem => s_current_instruction_address,
+                             read_data_mem => s_memory_data
+                             );
 
 end riscv_arc;
