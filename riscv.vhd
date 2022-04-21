@@ -52,6 +52,17 @@ architecture riscv_arc of riscv is
         );
     end component;
 
+    component mux41 is
+        generic (
+            largura_dado : natural := 32
+        );
+        port (
+            dado_ent_0, dado_ent_1, dado_ent_2, dado_ent_3 : in std_logic_vector((largura_dado - 1) downto 0);
+            sele_ent                                       : in std_logic_vector(1 downto 0);
+            dado_sai                                       : out std_logic_vector((largura_dado - 1) downto 0)
+        );
+    end component;
+
     component instruction_memory is
 
         port(
@@ -144,11 +155,38 @@ architecture riscv_arc of riscv is
     signal s_rs_1_data : std_logic_vector(31 downto 0);
     signal s_rs_2_data : std_logic_vector(31 downto 0);
     signal s_reg_file_write_data : std_logic_vector(31 downto 0);
-    signal s_alu_in_imm : std_logic_vector(31 downto 0);
-    signal s_alu_in_rs_1 : std_logic_vector(31 downto 0);
-    signal s_alu_in_rs_2 : std_logic_vector(31 downto 0);
+    
+    -- ALU --
 
-    -- dead
+    -- Entrada A 
+
+        -- Entradas Mux
+
+    signal s_alu_in_imm : std_logic_vector(31 downto 0);
+    signal s_alu_in_constant : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
+    signal s_alu_in_rs_2 : std_logic_vector(31 downto 0);
+    signal s_alu_in_dead : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+
+        -- Saida Mux
+
+    signal s_alu_A_in : std_logic_vector(31 downto 0);
+
+    -- Entrada B
+
+        -- Entradas Mux
+
+    signal s_alu_in_rs_1 : std_logic_vector(31 downto 0);
+    signal s_alu_in_program_counter : std_logic_vector(31 downto 0);
+
+        -- Saida Mux
+
+    signal s_alu_B_in : std_logic_vector(31 downto 0);
+
+    -- Saída ALU
+
+    signal s_alu_out : std_logic_vector(31 downto 0);
+
+    --------------------------- dead
 
     signal d_we : std_logic := '1';
     signal d_reset : std_logic := '0';
@@ -217,8 +255,8 @@ architecture riscv_arc of riscv is
 
     u_register_data_register: register_data_register port map(
                                                               we => sc_WE_register_data_reg,
-                                                              rs_1_input => rs_1_data,
-                                                              rs_2_input => rs_1_data,
+                                                              rs_1_input => s_rs_1_data,
+                                                              rs_2_input => s_rs_2_data,
                                                               clk => clk,
                                                               rs_1_output => s_alu_in_rs_1,
                                                               rs_2_output => s_alu_in_rs_2
@@ -229,5 +267,14 @@ architecture riscv_arc of riscv is
                                      signex_in => s_stored_instruction(31 downto 20),
                                      signex_out => s_alu_in_imm
                                     );
+
+    u_alu_B_in_mux: mux41 port map(
+                                    dado_ent_0 => s_alu_in_imm,
+                                    dado_ent_1 => s_alu_in_constant,
+                                    dado_ent_2 => s_alu_in_rs_2,
+                                    dado_ent_3 => s_alu_in_dead,
+                                    sele_ent => sc_alu_Bmux,
+                                    dado_sai => s_alu_A_in
+                                  );
 
 end riscv_arc;
