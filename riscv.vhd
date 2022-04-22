@@ -7,7 +7,20 @@ use ieee.NUMERIC_STD.all;
 entity riscv is
     port(
         clk : in std_logic;
-        set : in std_logic
+        set : in std_logic ;
+        sc_IorD : in std_logic ;
+        sc_WE_data : in std_logic ;
+        sc_WE_program_counter : in std_logic ;
+        sc_WE_memory : in std_logic ;
+        sc_WE_instruction_reg : in std_logic ;
+        sc_WE_data_reg : in std_logic ;
+        sc_WE_alu_out_reg : in std_logic ;
+        sc_WE_reg_file : in std_logic ;
+        sc_WE_register_data_reg : in std_logic ;
+        sc_PorR : in std_logic ;
+        sc_DorP : in std_logic ;
+        sc_alu_Bmux : in std_logic_vector(1 downto 0);
+        sc_alu_control : in std_logic_vector(2 downto 0)
         );
 end riscv;
 
@@ -128,28 +141,6 @@ architecture riscv_arc of riscv is
              rs_2_output : out std_logic_vector(31 downto 0)
             );
     end component;
-
--------------------------------------------------------------------------------
--- Declaracao de sinais -------------------------------------------------------
--------------------------------------------------------------------------------
-
-    ---------------
-    -- Control ----
-    ---------------
-
-    signal sc_IorD : std_logic := '1';
-    signal sc_WE_data : std_logic := '1';
-    signal sc_WE_program_counter : std_logic := '1';
-    signal sc_WE_memory : std_logic := '1';
-    signal sc_WE_instruction_reg : std_logic := '1';
-    signal sc_WE_data_reg : std_logic := '1';
-    signal sc_WE_alu_out_reg : std_logic := '1';
-    signal sc_WE_reg_file : std_logic := '1';
-    signal sc_WE_register_data_reg : std_logic := '1';
-    signal sc_PorR : std_logic := '0';
-    signal sc_DorP : std_logic := '0';
-    signal sc_alu_Bmux : std_logic_vector(1 downto 0);
-    signal sc_alu_control : std_logic_vector(2 downto 0);
 
 -------------------------------------------------------------------------------
 ---- DATAPATH SIGNALS ---------------------------------------------------------
@@ -325,7 +316,7 @@ architecture riscv_arc of riscv is
                                     dado_ent_2 => s_alu_in_rs_2,
                                     dado_ent_3 => s_alu_in_dead,
                                     sele_ent => sc_alu_Bmux,
-                                    dado_sai => s_alu_A_in
+                                    dado_sai => s_alu_B_in
                                   );
 
     u_alu_A_in_mux: mux21 port map(
