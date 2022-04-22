@@ -136,6 +136,7 @@ architecture riscv_arc of riscv is
 
     signal sc_IorD : std_logic := '1';
     signal sc_WE_data : std_logic := '1';
+    signal sc_WE_program_counter : std_logic := '1';
     signal sc_WE_instruction_reg : std_logic := '1';
     signal sc_WE_data_reg : std_logic := '1';
     signal sc_WE_alu_out_reg : std_logic := '1';
@@ -158,7 +159,7 @@ architecture riscv_arc of riscv is
 
 -- possui 32 bits para compatibilidade com saída de ALU. truncado na entrada de PC
 
-    signal s_next_instruction_address : std_logic_vector(31 downto 0); 
+    signal s_next_instruction_address : std_logic_vector(31 downto 0);
 
 -------------- Saída
 
@@ -171,7 +172,19 @@ architecture riscv_arc of riscv is
 
 -------------- Entrada
 
+    signal s_memory_address : std_logic_vector(11 downto 0);
+
+-------------- Saída
+
     signal s_instruction : std_logic_vector(31 downto 0);
+
+-------------------------------------------
+-------- Instruction Address Register -----
+-------------------------------------------
+
+-------------- Entrada ( já declarada )
+
+    -- signal s_instruction : std_logic_vector(31 downto 0);
 
 -------------- Saída
 
@@ -230,23 +243,6 @@ architecture riscv_arc of riscv is
 
     signal s_alu_out : std_logic_vector(31 downto 0);
 
-
---------------------------------------
--------- dead ------------------------
--------- dead ------------------------
--------- dead ------------------------
---------------------------------------
-
-    signal d_we : std_logic := '1';
-    signal d_reset : std_logic := '0';
-
-    signal d_mem : std_logic := '0';
-    signal d_we_2 : std_logic := '0';
-
-    signal d_mem_vec : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
-    signal d_adder : std_logic_vector(11 downto 0) := "000000000001";
-
-
 --------------------------------------------------------------------------
 -- Definicao de datapath -------------------------------------------------
 --------------------------------------------------------------------------
@@ -261,15 +257,9 @@ architecture riscv_arc of riscv is
                                    clk => clk,
                                    entrada => s_next_instruction_address(11 downto 0),
                                    saida => s_current_instruction_address,
-                                   we =>  d_we,
+                                   we =>  sc_WE_program_counter,
                                    reset => set
                                    );
-
-    u_pc_adder: somador port map(
-                                entrada_a => s_current_instruction_address,
-                                entrada_b => d_adder,
-                                saida => s_next_instruction_address(11 downto 0)
-                                );
 
     u_instruction_memory: instruction_memory port map(
             set => set, -- sinal para carregamento de programa
@@ -359,4 +349,13 @@ architecture riscv_arc of riscv is
                                                 clk => clk,
                                                 last_input => s_next_instruction_address
                                                 );
+
+    u_mux_memory_address: mux21
+                                generic map (largura_dado => 12)
+                                port map(
+                                        dado_ent_0 => s_next_instruction_address(11 downto 0),
+                                        dado_ent_1 => s_current_instruction_address,
+                                        sele_ent => sc_IorD,
+                                        dado_sai => s_memory_address
+                                      );
 end riscv_arc;
