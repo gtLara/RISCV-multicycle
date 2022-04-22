@@ -22,7 +22,7 @@ end memory;
 
 architecture memory_arc of memory is
 
-    type ram_32x32 is array (0 to 4031) of std_logic_vector(31 downto 0); -- 32 palavras  de 32 bits cada
+    type ram_32x32 is array (0 to 4095) of std_logic_vector(31 downto 0); -- 32 palavras  de 32 bits cada
     signal mem: ram_32x32;
 
     file program : text open read_mode is "program.txt"; -- cria arquivo
@@ -59,7 +59,7 @@ architecture memory_arc of memory is
     write: process(address, clk, write_data) -- processo de leitura de instrucao
     begin
 
-        if to_integer(address) < 4032 then
+        if to_integer(address) < 4096 then
             data <= mem(to_integer(unsigned(address)));
         end if;
 
