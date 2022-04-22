@@ -140,8 +140,10 @@ architecture riscv_arc of riscv is
     signal sc_WE_data_reg : std_logic := '1';
     signal sc_WE_reg_file : std_logic := '1';
     signal sc_WE_register_data_reg : std_logic := '1';
-    signal sc_PoR : std_logic := '0';
+    signal sc_PorR : std_logic := '0';
+    signal sc_DorP : std_logic := '0';
     signal sc_alu_Bmux : std_logic_vector(1 downto 0);
+    signal sc_alu_control : std_logic_vector(2 downto 0);
 
 -------------------------------------------------------------------------------
 ---- DATAPATH SIGNALS ---------------------------------------------------------
@@ -153,11 +155,12 @@ architecture riscv_arc of riscv is
 
 -------------- Entrada
 
-    signal s_next_instruction_address : std_logic_vector(11 downto 0);
+    signal s_next_instruction_address : std_logic_vector(31 downto 0);
 
 -------------- Saída
 
     signal s_current_instruction_address : std_logic_vector(11 downto 0);
+    signal s_current_instruction_address_ext : std_logic_vector(31 downto 0);
 
 --------------------
 -------- Memória ---
@@ -170,6 +173,14 @@ architecture riscv_arc of riscv is
 -------------- Saída
 
     signal s_stored_instruction : std_logic_vector(31 downto 0);
+
+--------------------------
+-------- Data Register ---
+--------------------------
+
+-------------- Saída
+
+    signal s_data_register_output : std_logic_vector(31 downto 0);
 
 --------------------------
 -------- Register File ---
@@ -245,7 +256,7 @@ architecture riscv_arc of riscv is
 
     u_program_counter: pc port map(
                                    clk => clk,
-                                   entrada => s_next_instruction_address,
+                                   entrada => s_next_instruction_address(11 downto 0),
                                    saida => s_current_instruction_address,
                                    we =>  d_we,
                                    reset => set
@@ -254,7 +265,7 @@ architecture riscv_arc of riscv is
     u_pc_adder: somador port map(
                                 entrada_a => s_current_instruction_address,
                                 entrada_b => d_adder,
-                                saida => s_next_instruction_address
+                                saida => s_next_instruction_address(11 downto 0)
                                 );
 
     u_instruction_memory: instruction_memory port map(
@@ -274,7 +285,7 @@ architecture riscv_arc of riscv is
                                             we => sc_WE_instruction_reg,
                                             next_input => s_stored_instruction,
                                             clk => clk,
-                                            last_input => s_reg_file_write_data
+                                            last_input => s_data_register_output
                                             );
 
     u_register_file: register_file port map(
@@ -298,9 +309,14 @@ architecture riscv_arc of riscv is
                                                              );
 
 
-    u_sign_extender: signex port map(
+    u_sign_extender_imm: signex port map(
                                      signex_in => s_stored_instruction(31 downto 20),
                                      signex_out => s_alu_in_imm
+                                    );
+
+    u_sign_extender_pc: signex port map(
+                                     signex_in => s_current_instruction_address,
+                                     signex_out => s_current_instruction_address_ext
                                     );
 
     u_alu_B_in_mux: mux41 port map(
@@ -313,9 +329,9 @@ architecture riscv_arc of riscv is
                                   );
 
     u_alu_A_in_mux: mux21 port map(
-                                    dado_ent_0 => s_current_instruction_address,
+                                    dado_ent_0 => s_current_instruction_address_ext,
                                     dado_ent_1 => s_alu_in_rs_1,
-                                    sele_ent => sc_PoR,
+                                    sele_ent => sc_PorR,
                                     dado_sai => s_alu_A_in
                                   );
 
@@ -326,5 +342,13 @@ architecture riscv_arc of riscv is
                         seletor   => sc_alu_control,
                         saida     => s_alu_out
                         );
+
+
+    u_write_data_mux: mux21 port map(
+                                    dado_ent_0 => s_next_instruction_address,
+                                    dado_ent_1 => s_data_register_output,
+                                    sele_ent => sc_DorP,
+                                    dado_sai => s_reg_file_write_data
+                                  );
 
 end riscv_arc;
