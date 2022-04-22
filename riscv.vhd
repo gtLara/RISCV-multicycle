@@ -17,6 +17,19 @@ architecture riscv_arc of riscv is
 -- Declaracao de componentes --------------------------------------------------
 -------------------------------------------------------------------------------
 
+    component ula is
+        generic (
+            largura_dado : natural := 32
+        );
+
+        port (
+            entrada_a : in std_logic_vector((largura_dado - 1) downto 0);
+            entrada_b : in std_logic_vector((largura_dado - 1) downto 0);
+            seletor   : in std_logic_vector(2 downto 0);
+            saida     : out std_logic_vector((largura_dado - 1) downto 0)
+        );
+    end component;
+
     component register_block is
 
         port(
@@ -304,5 +317,13 @@ architecture riscv_arc of riscv is
                                     sele_ent => sc_PoR,
                                     dado_sai => s_alu_A_in
                                   );
+
+
+    u_ALU: ula port map(
+                        entrada_a => s_alu_A_in,
+                        entrada_b => s_alu_B_in,
+                        seletor   => sc_alu_control,
+                        saida     => s_alu_out
+                        );
 
 end riscv_arc;
