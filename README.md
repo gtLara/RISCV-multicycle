@@ -9,7 +9,7 @@ Ricardo Duarte do departamento de Engenharia Eletrônica.
 
 ## Datapath
 
-![datapath](https://github.com/gtLara/RISCV-multicycle/blob/master/imagens/datapath.png)
+![datapath](imagens/datapath.png?raw=true)
 
 ## Componentes
 
@@ -23,7 +23,7 @@ memórias.
 
 Os sinais de controle são alimentados ao processador externamente via
 testbench, por enquanto. Variação dos sinais de controle podem ser aferidas no
-arquito [riscvtb](https://github.com/gtLara/RISCV-multicycle/blob/master/tb_riscv.vhd).
+arquito [riscvtb](tb_riscv.vhd).
 
 ## Simulações
 
@@ -37,7 +37,7 @@ montada para binário em
 
 00000000010000011010111110000011
 
-![lw](https://github.com/gtLara/RISCV-multicycle/blob/master/imagens/simulacao_simples_lw.png)
+![lw](imagens/simulacao_simples_lw.png?raw=true)
 
 Observamos na figura que o resultado da ULA está como esperado e a leitura do
 contador de programas também, assim como o parsing das instruções e os sinais
