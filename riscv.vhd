@@ -76,12 +76,15 @@ architecture riscv_arc of riscv is
         );
     end component;
 
-    component instruction_memory is
+    component memory is
 
         port(
+                clk : in std_logic;
+                we : in std_logic;
                 set : in std_logic; -- sinal para carregamento de progrma
                 address : in std_logic_vector(11 downto 0);
-                instruction : out std_logic_vector(31 downto 0));
+                write_data: in std_logic_vector(31 downto 0);
+                data : out std_logic_vector(31 downto 0));
 
     end component;
 
@@ -137,6 +140,7 @@ architecture riscv_arc of riscv is
     signal sc_IorD : std_logic := '1';
     signal sc_WE_data : std_logic := '1';
     signal sc_WE_program_counter : std_logic := '1';
+    signal sc_WE_memory : std_logic := '1';
     signal sc_WE_instruction_reg : std_logic := '1';
     signal sc_WE_data_reg : std_logic := '1';
     signal sc_WE_alu_out_reg : std_logic := '1';
@@ -261,10 +265,13 @@ architecture riscv_arc of riscv is
                                    reset => set
                                    );
 
-    u_instruction_memory: instruction_memory port map(
+    u_memory: memory port map(
+            clk => clk,
+            we => sc_WE_memory,
             set => set, -- sinal para carregamento de programa
             address => s_current_instruction_address,
-            instruction => s_instruction
+            write_data => s_alu_in_rs_2,
+            data => s_instruction
             );
 
     u_instruction_register: register_block port map(
