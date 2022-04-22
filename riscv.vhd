@@ -332,8 +332,8 @@ architecture riscv_arc of riscv is
                                   );
 
     u_alu_A_in_mux: mux21 port map(
-                                    dado_ent_0 => s_current_instruction_address_ext,
-                                    dado_ent_1 => s_alu_in_rs_1,
+                                    dado_ent_0 => s_alu_in_rs_1,
+                                    dado_ent_1 => s_current_instruction_address_ext,
                                     sele_ent => sc_PorR,
                                     dado_sai => s_alu_A_in
                                   );
