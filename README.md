@@ -9,7 +9,7 @@ Ricardo Duarte do departamento de Engenharia Eletrônica.
 
 ## Datapath
 
-![datapath](https://github.com/gtLara/sparc/blob/master/imagens/datapath.png)
+![datapath](https://github.com/gtLara/RISCV-multicycle/blob/master/imagens/datapath.png)
 
 ## Componentes
 
@@ -18,10 +18,6 @@ contribuidores do repositório e do professor Ricardo Duarte. A inclusão dos
 componentes de autoria própria foi realizada ao ter dificuldade de compreender
 e desenvolver em torno dos componentes pré-existentes, especialmente as
 memórias.
-
-## Datapath
-
-![datapath](https://github.com/gtLara/RISCV-multicycle/blob/master/imagens/datapath.png)
 
 ## Controle
 
