@@ -138,10 +138,12 @@ architecture riscv_arc of riscv is
     signal sc_WE_data : std_logic := '1';
     signal sc_WE_instruction_reg : std_logic := '1';
     signal sc_WE_data_reg : std_logic := '1';
+    signal sc_WE_alu_out_reg : std_logic := '1';
     signal sc_WE_reg_file : std_logic := '1';
     signal sc_WE_register_data_reg : std_logic := '1';
     signal sc_PoR : std_logic := '0';
     signal sc_alu_Bmux : std_logic_vector(1 downto 0);
+    signal sc_alu_control : std_logic_vector(2 downto 0);
 
 -------------------------------------------------------------------------------
 ---- DATAPATH SIGNALS ---------------------------------------------------------
@@ -153,7 +155,9 @@ architecture riscv_arc of riscv is
 
 -------------- Entrada
 
-    signal s_next_instruction_address : std_logic_vector(11 downto 0);
+-- possui 32 bits para compatibilidade com saída de ALU. truncado na entrada de PC
+
+    signal s_next_instruction_address : std_logic_vector(31 downto 0); 
 
 -------------- Saída
 
@@ -245,7 +249,7 @@ architecture riscv_arc of riscv is
 
     u_program_counter: pc port map(
                                    clk => clk,
-                                   entrada => s_next_instruction_address,
+                                   entrada => s_next_instruction_address(11 downto 0),
                                    saida => s_current_instruction_address,
                                    we =>  d_we,
                                    reset => set
@@ -326,5 +330,12 @@ architecture riscv_arc of riscv is
                         seletor   => sc_alu_control,
                         saida     => s_alu_out
                         );
+
+    u_ALU_out_register: register_block port map(
+                                                we => sc_WE_alu_out_reg,
+                                                next_input => s_alu_out,
+                                                clk => clk,
+                                                last_input => s_next_instruction_address
+                                                );
 
 end riscv_arc;
