@@ -138,6 +138,7 @@ architecture riscv_arc of riscv is
     signal sc_WE_data : std_logic := '1';
     signal sc_WE_instruction_reg : std_logic := '1';
     signal sc_WE_data_reg : std_logic := '1';
+    signal sc_WE_alu_out_reg : std_logic := '1';
     signal sc_WE_reg_file : std_logic := '1';
     signal sc_WE_register_data_reg : std_logic := '1';
     signal sc_PorR : std_logic := '0';
@@ -155,7 +156,9 @@ architecture riscv_arc of riscv is
 
 -------------- Entrada
 
-    signal s_next_instruction_address : std_logic_vector(31 downto 0);
+-- possui 32 bits para compatibilidade com saída de ALU. truncado na entrada de PC
+
+    signal s_next_instruction_address : std_logic_vector(31 downto 0); 
 
 -------------- Saída
 
@@ -343,7 +346,6 @@ architecture riscv_arc of riscv is
                         saida     => s_alu_out
                         );
 
-
     u_write_data_mux: mux21 port map(
                                     dado_ent_0 => s_next_instruction_address,
                                     dado_ent_1 => s_data_register_output,
@@ -351,4 +353,10 @@ architecture riscv_arc of riscv is
                                     dado_sai => s_reg_file_write_data
                                   );
 
+    u_ALU_out_register: register_block port map(
+                                                we => sc_WE_alu_out_reg,
+                                                next_input => s_alu_out,
+                                                clk => clk,
+                                                last_input => s_next_instruction_address
+                                                );
 end riscv_arc;
