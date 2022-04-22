@@ -113,36 +113,9 @@ architecture riscv_arc of riscv is
             );
     end component;
 
---------------------------------------------------------------------------
--- Declaracao de sinais --------------------------------------------------
---------------------------------------------------------------------------
-    ---------------
-    -- Instrucao --
-    ---------------
-
-    signal s_instruction : std_logic_vector(31 downto 0);
-    signal s_stored_instruction : std_logic_vector(31 downto 0);
-
-    -- parsing de instrucao:
-    -- o parsing da instrucao nesse momento é feito apenas para referência.
-    -- o verdadeiro parsing a nível de hardware acontece na instanciação dos
-    -- componentes.
-
-    -- imediato
-
-    signal s_immediate : std_logic_vector(11 downto 0) := s_stored_instruction(31 downto 20);
-
-    -- endereços de registradores
-
-    signal s_rs1 : std_logic_vector(4 downto 0) := s_instruction(19 downto 15);
-    signal s_rs2 : std_logic_vector(4 downto 0) := s_instruction(24 downto 20);
-    signal s_rd : std_logic_vector(4 downto 0) := s_instruction(11 downto 7);
-
-    -- opcode e functs (controle)
-
-    signal s_opcode : std_logic_vector(6 downto 0) := s_instruction(6 downto 0);
-    signal s_funct7 : std_logic_vector(6 downto 0) := s_instruction(31 downto 25);
-    signal s_funct3 : std_logic_vector(2 downto 0) := s_instruction(14 downto 12);
+-------------------------------------------------------------------------------
+-- Declaracao de sinais -------------------------------------------------------
+-------------------------------------------------------------------------------
 
     ---------------
     -- Control ----
@@ -157,47 +130,84 @@ architecture riscv_arc of riscv is
     signal sc_PoR : std_logic := '0';
     signal sc_alu_Bmux : std_logic_vector(1 downto 0);
 
-    -----------------------
-    -- Datapath signals ---
-    -----------------------
+-------------------------------------------------------------------------------
+---- DATAPATH SIGNALS ---------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+---------- Program Counter ----------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------- Entrada
 
     signal s_next_instruction_address : std_logic_vector(11 downto 0);
+
+-------------- Saída
+
     signal s_current_instruction_address : std_logic_vector(11 downto 0);
-    signal s_rs_1_data : std_logic_vector(31 downto 0);
-    signal s_rs_2_data : std_logic_vector(31 downto 0);
+
+-------------------------------------------------------------------------------
+---------- Memória ------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------- Entrada
+
+    signal s_instruction : std_logic_vector(31 downto 0);
+
+-------------- Saída
+
+    signal s_stored_instruction : std_logic_vector(31 downto 0);
+
+-------------------------------------------------------------------------------
+---------- Register File ------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------- Entrada
+
     signal s_reg_file_write_data : std_logic_vector(31 downto 0);
 
-    -- ALU --
+-------------- Saída
 
-    -- Entrada A
+    signal s_rs_1_data : std_logic_vector(31 downto 0);
+    signal s_rs_2_data : std_logic_vector(31 downto 0);
 
-        -- Entradas Mux
+-------------------------------------------------------------------------------
+---------- ALU ----------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------- Entrada A
+
+------------------------ Entradas Mux A
 
     signal s_alu_in_imm : std_logic_vector(31 downto 0);
     signal s_alu_in_constant : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
     signal s_alu_in_rs_2 : std_logic_vector(31 downto 0);
     signal s_alu_in_dead : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
 
-        -- Saida Mux
+------------------------ Saída Mux A
 
     signal s_alu_A_in : std_logic_vector(31 downto 0);
 
-    -- Entrada B
+-------------- Entrada B
 
-        -- Entradas Mux
+------------------------ Entradas Mux B
 
     signal s_alu_in_rs_1 : std_logic_vector(31 downto 0);
     signal s_alu_in_program_counter : std_logic_vector(31 downto 0);
 
-        -- Saida Mux
+------------------------ Saída Mux B
 
     signal s_alu_B_in : std_logic_vector(31 downto 0);
 
-    -- Saída ALU
+ ------------ Saída ALU
 
     signal s_alu_out : std_logic_vector(31 downto 0);
 
-    --------------------------- dead
+
+
+---------- dead ---------------------------------------------------------------
+---------- dead ---------------------------------------------------------------
+---------- dead ---------------------------------------------------------------
 
     signal d_we : std_logic := '1';
     signal d_reset : std_logic := '0';
