@@ -21,9 +21,13 @@ memórias.
 
 ## Controle
 
-Os sinais de controle são alimentados ao processador externamente via
-testbench, por enquanto. Variação dos sinais de controle podem ser aferidas no
-arquito [riscvtb](tb_riscv.vhd).
+Os sinais de controle do datapath são emitidos por uma máquina de estados
+finitos distinta em nível de abstração. O projeto em alto nível da máquina
+de estados (HLFSM) é ilustrado pela figura abaixo.
+
+![controle](imagens/controle.png?raw=true)
+
+A máquina de estados é implementada no componente [control](control.vhd).
 
 ## Simulações
 
