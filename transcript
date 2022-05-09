@@ -1,0 +1,53 @@
+do tb_riscv.do
+# .main_pane.wave.interior.cs.body.pw.wf
+# ** Error: No Design Loaded!
+# Error in macro ./tb_riscv.do line 3
+# No Design Loaded!
+#     while executing
+# "run 500ns"
+vsim work.tb_riscv(tb)
+# vsim work.tb_riscv(tb) 
+# Start time: 18:06:07 on Apr 21,2022
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading ieee.numeric_std(body)
+# Loading work.tb_riscv(tb)
+# Loading work.riscv(riscv_arc)
+# Loading work.pc(comportamental)
+# Loading work.somador(dataflow)
+# Loading ieee.std_logic_textio(body)
+# Loading work.instruction_memory(instruction_memory_arc)
+vsim work.tb_riscv(tb)
+# End time: 18:06:13 on Apr 21,2022, Elapsed time: 0:00:06
+# Errors: 0, Warnings: 0
+# vsim work.tb_riscv(tb) 
+# Start time: 18:06:13 on Apr 21,2022
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading ieee.numeric_std(body)
+# Loading work.tb_riscv(tb)
+# Loading work.riscv(riscv_arc)
+# Loading work.pc(comportamental)
+# Loading work.somador(dataflow)
+# Loading ieee.std_logic_textio(body)
+# Loading work.instruction_memory(instruction_memory_arc)
+do tb_riscv.do
+# .main_pane.wave.interior.cs.body.pw.wf
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libpthread.so.0 : module was loaded at an absolute address.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/librt.so.1 : module was loaded at an absolute address.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libdl.so.2 : module was loaded at an absolute address.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libm.so.6 : module was loaded at an absolute address.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libc.so.6 : module was loaded at an absolute address.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/ld-linux.so.2 : module was loaded at an absolute address.
+# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libnss_files.so.2 : module was loaded at an absolute address.
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /tb_riscv/uut/u_instruction_memory
+# End time: 18:35:12 on Apr 21,2022, Elapsed time: 0:28:59
+# Errors: 0, Warnings: 9
