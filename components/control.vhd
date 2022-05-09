@@ -159,7 +159,7 @@ begin
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0'; -- nao deveria ser 1?
+                    sc_WE_program_counter <= '0'; -- nao deveria ser 1? não. PC enable entra em um OR junto com o resultado da branch (dATA_PATH2.png)
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
                     sc_WE_data_reg <= '0';
@@ -363,4 +363,40 @@ begin
                 -- Next State
                     state <= fetch;
 
+		end case
+		
+	 	--Tabela Verdade (ALU Control) 
+		case s_alu_op is 
+			when "00"=>
+		       	sc_alu_control<="010";
+
+			when "01"=>
+		       	sc_alu_control<="110";
+
+			when "11"=>		--assumi que para esse caso a preferência é do subtract
+		       	sc_alu_control<="110";
+
+			when "10"=>
+				if (funct3="000") then
+
+					if (funct7="0000000")
+						sc_alu_control<="010";
+					
+					else 
+						sc_alu_control<="110";
+					end if;
+					
+				elsif(funct3="111") then
+					sc_alu_control <="000";
+
+				elsif(funct3="110") then
+					sc_alu_control <="001";
+
+				elsif(funct3="110") then
+					sc_alu_control <="111";
+			
+				end if;
+		end case
+
+	end if 
 end control_arc;
