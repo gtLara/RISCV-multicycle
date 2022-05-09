@@ -23,22 +23,23 @@ entity control is
         sc_WE_register_data_reg : out std_logic ;
         sc_PorR : out std_logic ;
         sc_DorP : out std_logic ;
+        sc_Zext : out std_logic ;
         sc_alu_Bmux : out std_logic_vector(1 downto 0);
         sc_alu_control : out std_logic_vector(2 downto 0)
 end entity;
 
 architecture control_arc of control is
 begin
-   type state_type is (fetch, 
-                       decode, 
-                       jalr, 
-                       jal, 
-                       branch, 
-                       I_execute, 
-                       I_writeback, 
-                       R_execute, 
-                       R_writeback, 
-                       mem_adr, 
+   type state_type is (fetch,
+                       decode,
+                       jalr,
+                       jal,
+                       branch,
+                       I_execute,
+                       I_writeback,
+                       R_execute,
+                       R_writeback,
+                       mem_adr,
                        sw_mem_write,
                        mem_read,
                        lb_mem_write,
@@ -69,13 +70,14 @@ begin
                     sc_WE_register_data_reg <= '0';
                     sc_PorR <= '0';
                     sc_DorP <= '0';
+                    sc_Zext <= '0';
                     sc_alu_Bmux <= "01";
                     sc_alu_op <= "00";
 
                 -- Next State
                     state <= decode;
 
-                when decode => 
+                when decode =>
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
@@ -88,6 +90,7 @@ begin
                     sc_WE_register_data_reg <= '0';
                     sc_PorR <= '0';
                     sc_DorP <= '0';
+                    sc_Zext <= '0';
                     sc_alu_Bmux <= "01";
                     sc_alu_op <= "00";
 
@@ -107,12 +110,12 @@ begin
                     elsif ( opcode = "0110011") then
                         state <= R_execute;
 
-                    elsif ( opcode = "0100011" or opcode = "0000011") then
+                    elsif ( opcode = "0100011" or opcode = "0000011") then -- sw ; lw, lb
                         state <= mem_adr;
 
                     end if;
 
-                when jalr => 
+                when jalr =>
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
@@ -125,13 +128,14 @@ begin
                     sc_WE_register_data_reg <= '0';
                     sc_PorR <= '0';
                     sc_DorP <= '0';
+                    sc_Zext <= '0';
                     sc_alu_Bmux <= "10";
                     sc_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
 
-                when jal => 
+                when jal =>
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
@@ -144,21 +148,219 @@ begin
                     sc_WE_register_data_reg <= '0';
                     sc_PorR <= '0';
                     sc_DorP <= '0';
+                    sc_Zext <= '0';
                     sc_alu_Bmux <= "10";
                     sc_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
 
-                when branch => 
-                when I_execute => 
-                when I_writeback => 
-                when R_execute => 
-                when R_writeback => 
-                when mem_adr => 
+                when branch =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0'; -- nao deveria ser 1?
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '1';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "10";
+
+                -- Next State
+                    state <= fetch;
+
+                when I_execute =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '1';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "11";
+                    sc_alu_op <= "10";
+
+                -- Next State
+                    state <= I_writeback;
+
+                when I_writeback =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '1';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '0';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    state <= fetch;
+
+                when R_execute =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '1';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "10";
+
+                -- Next State
+                    state <= R_writeback;
+
+                when R_writeback =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '1';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '0';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    state <= fetch;
+
+                when mem_adr =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '1';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "11";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    if (opcode = "0100011") then
+                        state <= sw_mem_write;
+                    elsif (opcode = "0000011") then
+                        state <= mem_read;
+                    end if;
+
                 when sw_mem_write =>
+                -- Control Signals
+                    sc_IorD <= '1';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '1';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '0';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    state <= fetch;
+
                 when mem_read =>
+                -- Control Signals
+                    sc_IorD <= '1';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '0';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '0';
+                    sc_DorP <= '0';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    if (funct3 = "000") then -- lb
+                        state <= lb_mem_write;
+                    elsif (funct3 = "010") then -- lw
+                        state <= lw_mem_write;
+                    end if;
+
                 when lb_mem_write =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '1';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '0';
+                    sc_DorP <= '1';
+                    sc_Zext <= '1';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    state <= fetch;
+
                 when lw_mem_write =>
+                -- Control Signals
+                    sc_IorD <= '0';
+                    sc_WE_data <= '0';
+                    sc_WE_program_counter <= '0';
+                    sc_WE_memory <= '1';
+                    sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '0';
+                    sc_WE_alu_out_reg <= '0';
+                    sc_WE_reg_file <= '0';
+                    sc_WE_register_data_reg <= '0';
+                    sc_PorR <= '0';
+                    sc_DorP <= '1';
+                    sc_Zext <= '0';
+                    sc_alu_Bmux <= "00";
+                    sc_alu_op <= "00";
+
+                -- Next State
+                    state <= fetch;
 
 end control_arc;
