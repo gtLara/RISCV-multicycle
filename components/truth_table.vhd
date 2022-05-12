@@ -52,4 +52,4 @@ begin
 		end case
 
 	end if 
-end control_arc;
+end architecture truth_table_arc;
