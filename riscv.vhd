@@ -356,4 +356,21 @@ architecture riscv_arc of riscv is
                                         sele_ent => sc_IorD,
                                         dado_sai => s_memory_address
                                       );
+    u_mux_MemtoReg: mux21                                                                                       --Nome dos sinais conforme datapath. Precisa alterar
+                                port map(
+                                        dado_ent_0 => s_alu_out,
+                                        dado_ent_1 => s_RD,
+                                        sele_ent => sc_MemtoReg,
+                                        dado_sai => s_WD3
+                                      );
+                                
+                                                                                                                --Nome dos sinais conforme datapath. Precisa alterar
+    u_mux_ZExt: mux21
+                                port map(
+                                        dado_ent_0 => s_mux_PCSrc_out,
+                                        dado_ent_1 => s_ZExt_out
+                                        sele_ent => sc_ZExt,
+                                        dado_sai => s_next_PC
+                                      );
+                                
 end riscv_arc;
