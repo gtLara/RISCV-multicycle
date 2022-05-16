@@ -15,9 +15,10 @@ entity truth_table is
 	
     -- out
       	sc_alu_control : out std_logic_vector(2 downto 0)
+	);
 end entity;
 
-architecture truth_tabel_arc of truth_table is
+architecture truth_table_arc of truth_table is
 begin
     process(clk, set)
     begin
@@ -48,8 +49,13 @@ begin
 						sc_alu_control <="001"; --or
 					when "010" =>
 						sc_alu_control <="111";  --slt
-				end case
-		end case
-
-	end if 
-end architecture truth_table_arc;
+					when others => 
+						sc_alu_control <= "UUU"; --slt
+				end case;
+			
+			when others => 
+				sc_alu_control <=  "UUU";  --slt
+		end case;
+	end if;
+    end process;	
+end truth_table_arc;
