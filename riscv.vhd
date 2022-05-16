@@ -17,9 +17,9 @@ entity riscv is
         sc_WE_alu_out_reg : in std_logic ;
         sc_WE_reg_file : in std_logic ;
         sc_WE_register_data_reg : in std_logic ;
-        sc_PorR : in std_logic ;
-        sc_DorP : in std_logic ;
-        sc_alu_Bmux : in std_logic_vector(1 downto 0);
+        sc_alu_src_A : in std_logic ;
+        sc_mem_to_reg : in std_logic ;
+        sc_alu_src_B : in std_logic_vector(1 downto 0);
         sc_alu_control : in std_logic_vector(2 downto 0)
         );
 end riscv;
@@ -315,14 +315,14 @@ architecture riscv_arc of riscv is
                                     dado_ent_1 => s_alu_in_constant,
                                     dado_ent_2 => s_alu_in_rs_2,
                                     dado_ent_3 => s_alu_in_dead,
-                                    sele_ent => sc_alu_Bmux,
+                                    sele_ent => sc_alu_src_B,
                                     dado_sai => s_alu_B_in
                                   );
 
     u_alu_A_in_mux: mux21 port map(
                                     dado_ent_0 => s_alu_in_rs_1,
                                     dado_ent_1 => s_current_instruction_address_ext,
-                                    sele_ent => sc_PorR,
+                                    sele_ent => sc_alu_src_A,
                                     dado_sai => s_alu_A_in
                                   );
 
@@ -337,7 +337,7 @@ architecture riscv_arc of riscv is
     u_write_data_mux: mux21 port map(
                                     dado_ent_0 => s_next_instruction_address,
                                     dado_ent_1 => s_data_register_output,
-                                    sele_ent => sc_DorP,
+                                    sele_ent => sc_mem_to_reg,
                                     dado_sai => s_reg_file_write_data
                                   );
 
@@ -356,21 +356,12 @@ architecture riscv_arc of riscv is
                                         sele_ent => sc_IorD,
                                         dado_sai => s_memory_address
                                       );
-    u_mux_MemtoReg: mux21                                                                                       --Nome dos sinais conforme datapath. Precisa alterar
-                                port map(
-                                        dado_ent_0 => s_alu_out,
-                                        dado_ent_1 => s_RD,
-                                        sele_ent => sc_MemtoReg,
-                                        dado_sai => s_WD3
-                                      );
-                                
-                                                                                                                --Nome dos sinais conforme datapath. Precisa alterar
-    u_mux_ZExt: mux21
-                                port map(
-                                        dado_ent_0 => s_mux_PCSrc_out,
-                                        dado_ent_1 => s_ZExt_out
-                                        sele_ent => sc_ZExt,
-                                        dado_sai => s_next_PC
-                                      );
+--    u_mux_ZExt: mux21
+--                                port map(
+--                                        dado_ent_0 => s_mux_PCSrc_out,
+--                                        dado_ent_1 => s_ZExt_out
+--                                        sele_ent => sc_ZExt,
+--                                        dado_sai => s_next_PC
+--                                      );
                                 
 end riscv_arc;

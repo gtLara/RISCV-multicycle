@@ -21,10 +21,10 @@ entity control is
         sc_WE_alu_out_reg : out std_logic ;
         sc_WE_reg_file : out std_logic ;
         sc_WE_register_data_reg : out std_logic ;
-        sc_PorR : out std_logic ;
-        sc_DorP : out std_logic ;
+        sc_alu_src_A : out std_logic ;
+        sc_mem_to_reg : out std_logic ;
         sc_Zext : out std_logic ;
-        sc_alu_Bmux : out std_logic_vector(1 downto 0);
+        sc_alu_src_B : out std_logic_vector(1 downto 0);
         sc_alu_control : out std_logic_vector(2 downto 0)
 end entity;
 
@@ -68,10 +68,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "01";
+                    sc_alu_src_B <= "01";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -88,10 +88,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "01";
+                    sc_alu_src_B <= "01";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -126,10 +126,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "10";
+                    sc_alu_src_B <= "10";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -146,10 +146,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "10";
+                    sc_alu_src_B <= "10";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -166,10 +166,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '1';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '1';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "10";
 
                 -- Next State
@@ -186,10 +186,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '1';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '1';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "11";
+                    sc_alu_src_B <= "11";
                     sc_alu_op <= "10";
 
                 -- Next State
@@ -206,10 +206,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -226,10 +226,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '1';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '1';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "10";
 
                 -- Next State
@@ -246,10 +246,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -266,10 +266,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '1';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '1';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "11";
+                    sc_alu_src_B <= "11";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -290,10 +290,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -310,10 +310,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '0';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -334,10 +334,10 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '1';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '1';
                     sc_Zext <= '1';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
 
                 -- Next State
@@ -354,16 +354,16 @@ begin
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
                     sc_WE_register_data_reg <= '0';
-                    sc_PorR <= '0';
-                    sc_DorP <= '1';
+                    sc_alu_src_A <= '0';
+                    sc_mem_to_reg <= '1';
                     sc_Zext <= '0';
-                    sc_alu_Bmux <= "00";
+                    sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
 
-		end case
+		end case;
 		
 	 	--Tabela Verdade (ALU Control) 
 		case s_alu_op is 
@@ -396,7 +396,6 @@ begin
 					sc_alu_control <="111";
 			
 				end if;
-		end case
-
-	end if 
+		end case;
+	end if;
 end control_arc;

@@ -25,9 +25,9 @@ architecture tb of tb_riscv is
             sc_WE_alu_out_reg : in std_logic ;
             sc_WE_reg_file : in std_logic ;
             sc_WE_register_data_reg : in std_logic ;
-            sc_PorR : in std_logic ;
-            sc_DorP : in std_logic ;
-            sc_alu_Bmux : in std_logic_vector(1 downto 0);
+            sc_alu_src_A : in std_logic ;
+            sc_mem_to_reg : in std_logic ;
+            sc_alu_src_B : in std_logic_vector(1 downto 0);
             sc_alu_control : in std_logic_vector(2 downto 0)
             );
     end component;
@@ -51,9 +51,9 @@ architecture tb of tb_riscv is
     signal sc_WE_alu_out_reg : std_logic ;
     signal sc_WE_reg_file : std_logic ;
     signal sc_WE_register_data_reg :  std_logic ;
-    signal sc_PorR : std_logic ;
-    signal sc_DorP : std_logic ;
-    signal sc_alu_Bmux : std_logic_vector(1 downto 0);
+    signal sc_alu_src_A : std_logic ;
+    signal sc_mem_to_reg : std_logic ;
+    signal sc_alu_src_B : std_logic_vector(1 downto 0);
     signal sc_alu_control : std_logic_vector(2 downto 0);
 
 
@@ -79,9 +79,9 @@ architecture tb of tb_riscv is
                         sc_WE_alu_out_reg => sc_WE_alu_out_reg,
                         sc_WE_reg_file => sc_WE_reg_file,
                         sc_WE_register_data_reg => sc_WE_register_data_reg,
-                        sc_PorR => sc_PorR,
-                        sc_DorP => sc_DorP,
-                        sc_alu_Bmux => sc_alu_Bmux,
+                        sc_alu_src_A => sc_alu_src_A,
+                        sc_mem_to_reg => sc_mem_to_reg,
+                        sc_alu_src_B => sc_alu_src_B,
                         sc_alu_control => sc_alu_control
                         );
 
@@ -102,9 +102,9 @@ architecture tb of tb_riscv is
         sc_WE_alu_out_reg <= '0' ;
         sc_WE_reg_file <= '0' ;
         sc_WE_register_data_reg <= '0' ;
-        sc_PorR <= '0' ;
-        sc_DorP <= '0' ;
-        sc_alu_Bmux <= "00" ;
+        sc_alu_src_A <= '0' ;
+        sc_mem_to_reg <= '0' ;
+        sc_alu_src_B <= "00" ;
         sc_alu_control <= "000" ;
 
         wait for clock_period;
@@ -120,9 +120,9 @@ architecture tb of tb_riscv is
         sc_WE_alu_out_reg <= '0' ;
         sc_WE_reg_file <= '0' ;
         sc_WE_register_data_reg <= '0' ;
-        sc_PorR <= '0' ;
-        sc_DorP <= '0' ;
-        sc_alu_Bmux <= "00" ;
+        sc_alu_src_A <= '0' ;
+        sc_mem_to_reg <= '0' ;
+        sc_alu_src_B <= "00" ;
         sc_alu_control <= "000" ;
 
         wait for clock_period;
@@ -138,9 +138,9 @@ architecture tb of tb_riscv is
         sc_WE_alu_out_reg <= '0' ;
         sc_WE_reg_file <= '0' ;
         sc_WE_register_data_reg <= '1' ;
-        sc_PorR <= '0' ;
-        sc_DorP <= '0' ;
-        sc_alu_Bmux <= "00" ;
+        sc_alu_src_A <= '0' ;
+        sc_mem_to_reg <= '0' ;
+        sc_alu_src_B <= "00" ;
         sc_alu_control <= "000" ;
 
         wait for clock_period;
@@ -156,9 +156,9 @@ architecture tb of tb_riscv is
         sc_WE_alu_out_reg <= '1' ;
         sc_WE_reg_file <= '0' ;
         sc_WE_register_data_reg <= '0' ;
-        sc_PorR <= '0' ;
-        sc_DorP <= '0' ;
-        sc_alu_Bmux <= "00" ;
+        sc_alu_src_A <= '0' ;
+        sc_mem_to_reg <= '0' ;
+        sc_alu_src_B <= "00" ;
         sc_alu_control <= "000" ;
 
         wait for clock_period;
@@ -174,9 +174,9 @@ architecture tb of tb_riscv is
         sc_WE_alu_out_reg <= '0' ;
         sc_WE_reg_file <= '1' ;
         sc_WE_register_data_reg <= '0' ;
-        sc_PorR <= '1' ;
-        sc_DorP <= '0' ;
-        sc_alu_Bmux <= "01" ;
+        sc_alu_src_A <= '1' ;
+        sc_mem_to_reg <= '0' ;
+        sc_alu_src_B <= "01" ;
         sc_alu_control <= "000" ;
 
     end process testbench;
