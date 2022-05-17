@@ -24,13 +24,14 @@ entity control is
         sc_alu_src_A : out std_logic ;
         sc_mem_to_reg : out std_logic ;
         sc_Zext : out std_logic ;
-        sc_alu_src_B : out std_logic_vector(1 downto 0);
+        sc_alu_src_B : out std_logic_vector(1 downto 0) ;
         sc_alu_control : out std_logic_vector(2 downto 0)
+        );
 end entity;
 
 architecture control_arc of control is
-begin
-   type state_type is (fetch,
+
+    type state_type is (fetch,
                        decode,
                        jalr,
                        jal,
@@ -48,12 +49,14 @@ begin
 
     signal state : state_type := fetch;
 
-    signal s_alu_op : std_logic_vector(1 downto 0) ;
+    signal sc_alu_op : std_logic_vector(1 downto 0) ;
+
+    begin
 
     process(clk, set)
     begin
         if (set = '1') then -- inicializacao de FSM
-            state <= fetch
+            state <= fetch;
 
         elsif rising_edge(clk) then
             case state is
@@ -364,38 +367,7 @@ begin
                     state <= fetch;
 
 		end case;
-		
-	 	--Tabela Verdade (ALU Control) 
-		case s_alu_op is 
-			when "00"=>
-		       	sc_alu_control<="010";
 
-			when "01"=>
-		       	sc_alu_control<="110";
-
-			when "11"=>		--assumi que para esse caso a preferência é do subtract
-		       	sc_alu_control<="110";
-
-			when "10"=>
-				if (funct3="000") then
-
-					if (funct7="0000000")
-						sc_alu_control<="010";
-					
-					else 
-						sc_alu_control<="110";
-					end if;
-					
-				elsif(funct3="111") then
-					sc_alu_control <="000";
-
-				elsif(funct3="110") then
-					sc_alu_control <="001";
-
-				elsif(funct3="110") then
-					sc_alu_control <="111";
-			
-				end if;
-		end case;
 	end if;
+    end process;
 end control_arc;
