@@ -9,6 +9,7 @@ entity control is
         opcode : in std_logic_vector(6 downto 0);
         funct3 : in std_logic_vector(2 downto 0);
         funct7 : in std_logic_vector(6 downto 0);
+        zero : in std_logic ;
         set : in std_logic ;
         clk : in std_logic ;
     -- out
@@ -23,6 +24,7 @@ entity control is
         sc_WE_register_data_reg : out std_logic ;
         sc_alu_src_A : out std_logic ;
         sc_mem_to_reg : out std_logic ;
+        sc_pc_src : out std_logic ;
         sc_Zext : out std_logic ;
         sc_alu_src_B : out std_logic_vector(1 downto 0) ;
         sc_alu_control : out std_logic_vector(2 downto 0)
@@ -50,6 +52,7 @@ architecture control_arc of control is
     signal state : state_type := fetch;
 
     signal sc_alu_op : std_logic_vector(1 downto 0) ;
+    signal s_branch : std_logic ;
 
     begin
 
@@ -162,7 +165,6 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0'; -- nao deveria ser 1? não. PC enable entra em um OR junto com o resultado da branch (dATA_PATH2.png)
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
                     sc_WE_data_reg <= '0';
@@ -172,8 +174,12 @@ architecture control_arc of control is
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
-                    sc_alu_src_B <= "00";
+                    sc_alu_src_B <= "11";
                     sc_alu_op <= "10";
+
+                -- Determinacao de escrita em PC
+
+                    sc_WE_program_counter <= zero
 
                 -- Next State
                     state <= fetch;
