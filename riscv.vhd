@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use ieee.NUMERIC_STD.all;
+use ieee.NUMERIC_STD.SHIFT_LEFT;
 
 
 entity riscv is
@@ -132,6 +133,14 @@ architecture riscv_arc of riscv is
          );
     end component;
 
+    component shift_left is
+        generic(size: integer := 32); -- na verdade é tamanho - 1
+        port(
+             input: in std_logic_vector(size downto 0);
+             output: out std_logic_vector(size downto 0)
+         );
+    end component;
+
     component register_data_register is
         port(
              we : in std_logic;
@@ -218,7 +227,7 @@ architecture riscv_arc of riscv is
     signal s_alu_in_imm : std_logic_vector(31 downto 0);
     signal s_alu_in_constant : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
     signal s_alu_in_rs_2 : std_logic_vector(31 downto 0);
-    signal s_alu_in_dead : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+    signal s_alu_in_shifted_imm : std_logic_vector(31 downto 0);
 
     -------------------- Saída Mux A
 
@@ -317,18 +326,23 @@ architecture riscv_arc of riscv is
                                      signex_out => s_current_instruction_address_ext
                                     );
 
+    u_left_shifter : shift_left port map(
+                                         input => s_alu_in_imm,
+                                         output => s_alu_in_shifted_imm
+                                         );
+
     u_alu_B_in_mux: mux41 port map(
-                                    dado_ent_0 => s_alu_in_imm,
+                                    dado_ent_0 => s_alu_in_rs_2,
                                     dado_ent_1 => s_alu_in_constant,
-                                    dado_ent_2 => s_alu_in_rs_2,
-                                    dado_ent_3 => s_alu_in_dead,
+                                    dado_ent_2 => s_alu_in_imm,
+                                    dado_ent_3 => s_alu_in_shifted_imm,
                                     sele_ent => sc_alu_src_B,
                                     dado_sai => s_alu_B_in
                                   );
 
     u_alu_A_in_mux: mux21 port map(
-                                    dado_ent_0 => s_alu_in_rs_1,
-                                    dado_ent_1 => s_current_instruction_address_ext,
+                                    dado_ent_0 => s_current_instruction_address_ext,
+                                    dado_ent_1 => s_alu_in_rs_1,
                                     sele_ent => sc_alu_src_A,
                                     dado_sai => s_alu_A_in
                                   );
@@ -358,8 +372,8 @@ architecture riscv_arc of riscv is
     u_mux_memory_address: mux21
                                 generic map (largura_dado => 12)
                                 port map(
-                                        dado_ent_0 => s_alu_reg_out(11 downto 0),
-                                        dado_ent_1 => s_current_instruction_address,
+                                        dado_ent_0 => s_current_instruction_address,
+                                        dado_ent_1 => s_alu_reg_out(11 downto 0),
                                         sele_ent => sc_IorD,
                                         dado_sai => s_memory_address
                                       );
