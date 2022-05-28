@@ -19,6 +19,7 @@ entity riscv is
         sc_WE_register_data_reg : in std_logic ;
         sc_alu_src_A : in std_logic ;
         sc_mem_to_reg : in std_logic ;
+        sc_pc_src : in std_logic ;
         sc_alu_src_B : in std_logic_vector(1 downto 0);
         sc_alu_control : in std_logic_vector(2 downto 0)
         );
@@ -238,6 +239,12 @@ architecture riscv_arc of riscv is
 
     signal s_alu_out : std_logic_vector(31 downto 0);
 
+-------------------------
+-------- ALU Register ---
+-------------------------
+
+    signal s_alu_reg_out : std_logic_vector(31 downto 0);
+
 --------------------------------------------------------------------------
 -- Definicao de datapath -------------------------------------------------
 --------------------------------------------------------------------------
@@ -335,7 +342,7 @@ architecture riscv_arc of riscv is
                         );
 
     u_write_data_mux: mux21 port map(
-                                    dado_ent_0 => s_next_instruction_address,
+                                    dado_ent_0 => s_alu_reg_out,
                                     dado_ent_1 => s_data_register_output,
                                     sele_ent => sc_mem_to_reg,
                                     dado_sai => s_reg_file_write_data
@@ -345,17 +352,27 @@ architecture riscv_arc of riscv is
                                                 we => sc_WE_alu_out_reg,
                                                 next_input => s_alu_out,
                                                 clk => clk,
-                                                last_input => s_next_instruction_address
+                                                last_input => s_alu_reg_out
                                                 );
 
     u_mux_memory_address: mux21
                                 generic map (largura_dado => 12)
                                 port map(
-                                        dado_ent_0 => s_next_instruction_address(11 downto 0),
+                                        dado_ent_0 => s_alu_reg_out(11 downto 0),
                                         dado_ent_1 => s_current_instruction_address,
                                         sele_ent => sc_IorD,
                                         dado_sai => s_memory_address
                                       );
+
+    u_mux_instruction_address: mux21
+                                    generic map (largura_dado => 32)
+                                    port map(
+                                            dado_ent_0 => s_alu_out,
+                                            dado_ent_1 => s_alu_reg_out,
+                                            sele_ent => sc_pc_src,
+                                            dado_sai => s_next_instruction_address
+                                          );
+
 --    u_mux_ZExt: mux21
 --                                port map(
 --                                        dado_ent_0 => s_mux_PCSrc_out,
@@ -363,5 +380,5 @@ architecture riscv_arc of riscv is
 --                                        sele_ent => sc_ZExt,
 --                                        dado_sai => s_next_PC
 --                                      );
-                                
+
 end riscv_arc;
