@@ -10,6 +10,7 @@ entity control is
         funct3 : in std_logic_vector(2 downto 0);
         funct7 : in std_logic_vector(6 downto 0);
         zero : in std_logic ;
+        neg : in std_logic ;
         set : in std_logic ;
         clk : in std_logic ;
     -- out
@@ -46,6 +47,17 @@ architecture control_arc of control is
         );
     end component;
 
+    component brancher is
+        port(
+        -- in
+            funct3 : in std_logic_vector(2 downto 0);
+            neg: in std_logic ;
+            zero : in std_logic ;
+        -- out
+            s_branch_taken : out std_logic
+        );
+    end component;
+
 -------------------------------------------------------------------------------
 ---- Declaraco de Sinais ------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -70,6 +82,7 @@ architecture control_arc of control is
 
     signal s_alu_op : std_logic_vector(1 downto 0) ;
     signal s_branch : std_logic ;
+    signal s_branch_taken : std_logic ;
 
 --------------------------------------------------------------------------
 -- Definicao de controle -------------------------------------------------
@@ -89,6 +102,15 @@ architecture control_arc of control is
                                 sc_alu_control => sc_alu_control
                               );
 
+    u_brancher : brancher
+                        port map(
+                        -- in
+                            funct3 => funct3,
+                            neg => neg,
+                            zero => zero,
+                        -- out
+                            s_branch_taken => s_branch_taken
+                        );
 -------------------------------------------------------------------------------
 -- Inicio de Processo FSM -----------------------------------------------------
 -------------------------------------------------------------------------------
@@ -117,6 +139,7 @@ architecture control_arc of control is
                     sc_alu_src_B <= "01";
                     s_alu_op <= "00";
                     sc_pc_src <= '0';
+                    s_branch <= '0';
 
                 -- Next State
                     state <= decode;
@@ -217,7 +240,8 @@ architecture control_arc of control is
 
                 -- Determinacao de escrita em PC
 
-                    sc_WE_program_counter <= zero;
+                    s_branch <= '1';
+                    sc_WE_program_counter <= (s_branch and s_branch_taken);
 
                 -- Next State
                     state <= fetch;
