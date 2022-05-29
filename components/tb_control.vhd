@@ -9,7 +9,7 @@ end tb_control;
 architecture tb of tb_control is
 
 --------------------------------------------------------------------------
--- Declaracao de truth table ---------------------------------------------
+-- Declaracao de controle ------------------------------------------------
 --------------------------------------------------------------------------
 
     component control is
@@ -17,6 +17,7 @@ architecture tb of tb_control is
             opcode : in std_logic_vector(6 downto 0);
             funct3 : in std_logic_vector(2 downto 0);
             funct7 : in std_logic_vector(6 downto 0);
+            zero : in std_logic;
             set : in std_logic ;
             clk : in std_logic ;
 
@@ -25,10 +26,7 @@ architecture tb of tb_control is
             sc_WE_program_counter : out std_logic ;
             sc_WE_memory : out std_logic ;
             sc_WE_instruction_reg : out std_logic ;
-            sc_WE_data_reg : out std_logic ;
-            sc_WE_alu_out_reg : out std_logic ;
             sc_WE_reg_file : out std_logic ;
-            sc_WE_register_data_reg : out std_logic ;
             sc_alu_src_A : out std_logic ;
             sc_mem_to_reg : out std_logic ;
             sc_Zext : out std_logic ;
@@ -50,6 +48,7 @@ architecture tb of tb_control is
 
     signal clk : std_logic := '0';
     signal set : std_logic := '0';
+    signal zero : std_logic := '0';
 
     -- outputs
 
@@ -86,16 +85,14 @@ architecture tb of tb_control is
                             funct7 => funct7,
                             set => set,
                             clk => clk,
+                            zero => zero,
 
                             sc_IorD => sc_IorD,
                             sc_WE_data => sc_WE_data,
                             sc_WE_program_counter => sc_WE_program_counter,
                             sc_WE_memory => sc_WE_memory,
                             sc_WE_instruction_reg => sc_WE_instruction_reg,
-                            sc_WE_data_reg => sc_WE_data_reg,
-                            sc_WE_alu_out_reg => sc_WE_alu_out_reg,
                             sc_WE_reg_file => sc_WE_reg_file,
-                            sc_WE_register_data_reg => sc_WE_register_data_reg,
                             sc_alu_src_A => sc_alu_src_A,
                             sc_mem_to_reg => sc_mem_to_reg,
                             sc_Zext => sc_Zext,

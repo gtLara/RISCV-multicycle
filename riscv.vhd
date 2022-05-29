@@ -14,10 +14,7 @@ entity riscv is
         sc_WE_program_counter : in std_logic ;
         sc_WE_memory : in std_logic ;
         sc_WE_instruction_reg : in std_logic ;
-        sc_WE_data_reg : in std_logic ;
-        sc_WE_alu_out_reg : in std_logic ;
         sc_WE_reg_file : in std_logic ;
-        sc_WE_register_data_reg : in std_logic ;
         sc_alu_src_A : in std_logic ;
         sc_mem_to_reg : in std_logic ;
         sc_pc_src : in std_logic ;
@@ -289,7 +286,7 @@ architecture riscv_arc of riscv is
                                                    );
 
     u_data_register: register_block port map(
-                                            we => sc_WE_instruction_reg,
+                                            we => '1',
                                             next_input => s_stored_instruction,
                                             clk => clk,
                                             last_input => s_data_register_output
@@ -307,7 +304,7 @@ architecture riscv_arc of riscv is
                                             );
 
     u_register_data_register: register_data_register port map(
-                                                              we => sc_WE_register_data_reg,
+                                                              we => '1',
                                                               rs_1_input => s_rs_1_data,
                                                               rs_2_input => s_rs_2_data,
                                                               clk => clk,
@@ -363,7 +360,7 @@ architecture riscv_arc of riscv is
                                   );
 
     u_ALU_out_register: register_block port map(
-                                                we => sc_WE_alu_out_reg,
+                                                we => '1',
                                                 next_input => s_alu_out,
                                                 clk => clk,
                                                 last_input => s_alu_reg_out

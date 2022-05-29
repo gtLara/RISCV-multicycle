@@ -18,10 +18,7 @@ entity control is
         sc_WE_program_counter : out std_logic ;
         sc_WE_memory : out std_logic ;
         sc_WE_instruction_reg : out std_logic ;
-        sc_WE_data_reg : out std_logic ;
-        sc_WE_alu_out_reg : out std_logic ;
         sc_WE_reg_file : out std_logic ;
-        sc_WE_register_data_reg : out std_logic ;
         sc_alu_src_A : out std_logic ;
         sc_mem_to_reg : out std_logic ;
         sc_pc_src : out std_logic ;
@@ -110,8 +107,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '1';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '0';
@@ -131,8 +128,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '0';
@@ -169,8 +166,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '1';
@@ -189,8 +186,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '0';
@@ -208,8 +205,8 @@ architecture control_arc of control is
                     sc_WE_data <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '1';
@@ -232,8 +229,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '1';
@@ -252,8 +249,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '1';
 
                     sc_alu_src_A <= '0';
@@ -272,8 +269,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '1';
@@ -292,8 +289,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '1';
 
                     sc_alu_src_A <= '0';
@@ -312,8 +309,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '1';
@@ -336,8 +333,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '1';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '0';
@@ -356,8 +353,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '0';
@@ -380,8 +377,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '1';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '0';
 
                     sc_alu_src_A <= '0';
@@ -400,8 +397,8 @@ architecture control_arc of control is
                     sc_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
-                    sc_WE_data_reg <= '0';
-                    sc_WE_alu_out_reg <= '0';
+
+
                     sc_WE_reg_file <= '1';
 
                     sc_alu_src_A <= '0';
