@@ -27,13 +27,13 @@ begin
     process (entrada_a, entrada_b, seletor) is
     begin
         case(seletor) is
-            when "000" => -- soma com sinal
+            when "010" => -- soma com sinal
             resultado_ula <= std_logic_vector(signed(entrada_a) + signed(entrada_b));
-            when "001" => -- soma estendida
-            resultado_ula <= std_logic_vector(signed(entrada_a) + signed(entrada_b));
-            when "100" => -- and lógico
+            when "110" => -- subtracao com sinal
+            resultado_ula <= std_logic_vector(signed(entrada_a) - signed(entrada_b));
+            when "000" => -- and lógico
             resultado_ula <= entrada_a and entrada_b;
-            when "101" => -- or lógico
+            when "001" => -- or lógico
             resultado_ula <= entrada_a or entrada_b;
             when "110" => -- xor lógico
             resultado_ula <= entrada_a xor entrada_b;
