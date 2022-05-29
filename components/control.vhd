@@ -83,6 +83,7 @@ architecture control_arc of control is
     signal s_alu_op : std_logic_vector(1 downto 0) ;
     signal s_branch : std_logic ;
     signal s_branch_taken : std_logic ;
+    signal s_WE_program_counter : std_logic ;
 
 --------------------------------------------------------------------------
 -- Definicao de controle -------------------------------------------------
@@ -126,7 +127,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '1';
+                    s_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '1';
 
@@ -148,7 +149,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -186,7 +187,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '1';
+                    s_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -206,7 +207,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '1';
+                    s_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -241,7 +242,6 @@ architecture control_arc of control is
                 -- Determinacao de escrita em PC
 
                     s_branch <= '1';
-                    sc_WE_program_counter <= (s_branch and s_branch_taken);
 
                 -- Next State
                     state <= fetch;
@@ -250,7 +250,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -270,7 +270,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -290,7 +290,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -310,7 +310,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -330,7 +330,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -354,7 +354,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '1';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '1';
                     sc_WE_instruction_reg <= '0';
 
@@ -374,7 +374,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '1';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -398,7 +398,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '1';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '1';
                     sc_WE_instruction_reg <= '0';
 
@@ -418,7 +418,7 @@ architecture control_arc of control is
                 -- Control Signals
                     sc_IorD <= '0';
                     sc_WE_data <= '0';
-                    sc_WE_program_counter <= '0';
+                    s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
 
@@ -435,7 +435,9 @@ architecture control_arc of control is
                     state <= fetch;
 
 		end case;
-
         end if;
     end process;
+
+    sc_WE_program_counter <= (s_branch and s_branch_taken) or s_WE_program_counter;
+
 end control_arc;
