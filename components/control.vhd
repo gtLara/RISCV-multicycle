@@ -33,6 +33,26 @@ end entity;
 
 architecture control_arc of control is
 
+-------------------------------------------------------------------------------
+---- Declaraco de Componentes -------------------------------------------------
+-------------------------------------------------------------------------------
+
+    component truth_table is
+        port(
+        -- in
+            funct3 : in std_logic_vector(2 downto 0);
+            funct7 : in std_logic_vector(6 downto 0);
+            s_alu_op : std_logic_vector(1 downto 0) ;
+
+        -- out
+            sc_alu_control : out std_logic_vector(2 downto 0)
+        );
+    end component;
+
+-------------------------------------------------------------------------------
+---- Declaraco de Sinais ------------------------------------------------------
+-------------------------------------------------------------------------------
+
     type state_type is (fetch,
                        decode,
                        jalr,
@@ -51,10 +71,30 @@ architecture control_arc of control is
 
     signal state : state_type := fetch;
 
-    signal sc_alu_op : std_logic_vector(1 downto 0) ;
+    signal s_alu_op : std_logic_vector(1 downto 0) ;
     signal s_branch : std_logic ;
 
+--------------------------------------------------------------------------
+-- Definicao de controle -------------------------------------------------
+--------------------------------------------------------------------------
+
     begin
+
+-------------------------------------------------------------------------------
+-- Instanciacao de componentes ------------------------------------------------
+-------------------------------------------------------------------------------
+
+    u_alu_truth_table : truth_table
+                        port map(
+                                funct3 => funct3,
+                                funct7 => funct7,
+                                s_alu_op => s_alu_op,
+                                sc_alu_control => sc_alu_control
+                              );
+
+-------------------------------------------------------------------------------
+-- Inicio de Processo FSM -----------------------------------------------------
+-------------------------------------------------------------------------------
 
     process(clk, set)
     begin
@@ -73,12 +113,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "01";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
                     sc_pc_src <= '0';
 
                 -- Next State
@@ -94,12 +134,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "11";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     if (opcode = "1100111") then
@@ -132,12 +172,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "10";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
@@ -152,12 +192,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "11";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
@@ -171,16 +211,16 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "10";
+                    s_alu_op <= "10";
 
                 -- Determinacao de escrita em PC
 
-                    sc_WE_program_counter <= zero
+                    sc_WE_program_counter <= zero;
 
                 -- Next State
                     state <= fetch;
@@ -195,12 +235,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "10";
-                    sc_alu_op <= "10";
+                    s_alu_op <= "10";
 
                 -- Next State
                     state <= I_writeback;
@@ -215,12 +255,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '1';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
@@ -235,12 +275,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "10";
+                    s_alu_op <= "10";
 
                 -- Next State
                     state <= R_writeback;
@@ -255,12 +295,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
@@ -275,12 +315,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "10";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     if (opcode = "0100011") then
@@ -299,12 +339,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
@@ -319,12 +359,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     if (funct3 = "000") then -- lb
@@ -343,12 +383,12 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '1';
                     sc_Zext <= '1';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
@@ -363,18 +403,18 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
-                    
+
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
-                    sc_alu_op <= "00";
+                    s_alu_op <= "00";
 
                 -- Next State
                     state <= fetch;
 
 		end case;
 
-	end if;
+        end if;
     end process;
 end control_arc;
