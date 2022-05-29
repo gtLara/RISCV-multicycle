@@ -18,6 +18,7 @@ architecture tb of tb_control is
             funct3 : in std_logic_vector(2 downto 0);
             funct7 : in std_logic_vector(6 downto 0);
             zero : in std_logic;
+            neg : in std_logic;
             set : in std_logic ;
             clk : in std_logic ;
 
@@ -48,7 +49,8 @@ architecture tb of tb_control is
 
     signal clk : std_logic := '0';
     signal set : std_logic := '0';
-    signal zero : std_logic := '0';
+    signal zero : std_logic;
+    signal neg : std_logic;
 
     -- outputs
 
@@ -86,6 +88,7 @@ architecture tb of tb_control is
                             set => set,
                             clk => clk,
                             zero => zero,
+                            neg => neg,
 
                             sc_IorD => sc_IorD,
                             sc_WE_data => sc_WE_data,
@@ -108,9 +111,13 @@ architecture tb of tb_control is
 
         wait for clock_period; -- fetch
 
-        opcode <= "0110011";
+        --  beq: BNT
+
+        opcode <= "1100011";
         funct3 <= "000";
-        funct7 <= "0000000";
+        zero <= '0';
+        neg <= '0';
+
 
         wait for clock_period; -- decode
 
@@ -120,9 +127,12 @@ architecture tb of tb_control is
 
         wait for clock_period; -- write back
 
-        opcode <= "0010011";
+        --  beq: BNT
+
+        opcode <= "1100011";
         funct3 <= "000";
-        funct7 <= "0000000";
+        zero <= '1';
+        neg <= '0';
 
         wait for clock_period; -- fetch
 
