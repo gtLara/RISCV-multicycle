@@ -294,7 +294,7 @@ architecture control_arc of control is
                     sc_WE_reg_file <= '1';
 
                     sc_alu_src_A <= '0';
-                    sc_mem_to_reg <= '0';
+                    sc_mem_to_reg <= '1';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
