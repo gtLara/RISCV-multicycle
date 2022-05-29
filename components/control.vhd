@@ -73,12 +73,13 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "01";
                     sc_alu_op <= "00";
+                    sc_pc_src <= '0';
 
                 -- Next State
                     state <= decode;
@@ -93,7 +94,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -131,7 +132,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -151,7 +152,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -170,7 +171,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -194,7 +195,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -214,9 +215,9 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
-                    sc_mem_to_reg <= '0';
+                    sc_mem_to_reg <= '1';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
                     sc_alu_op <= "00";
@@ -234,7 +235,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -254,7 +255,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '1';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -274,7 +275,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -298,7 +299,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -318,7 +319,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
@@ -342,7 +343,7 @@ architecture control_arc of control is
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
                     sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    
                     sc_alu_src_A <= '0';
                     sc_mem_to_reg <= '1';
                     sc_Zext <= '1';
@@ -354,17 +355,17 @@ architecture control_arc of control is
 
                 when lw_mem_write =>
                 -- Control Signals
-                    sc_IorD <= '1';
+                    sc_IorD <= '0';
                     sc_WE_data <= '0';
                     sc_WE_program_counter <= '0';
-                    sc_WE_memory <= '1';
+                    sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
                     sc_WE_data_reg <= '0';
                     sc_WE_alu_out_reg <= '0';
-                    sc_WE_reg_file <= '0';
-                    sc_WE_register_data_reg <= '0';
+                    sc_WE_reg_file <= '1';
+                    
                     sc_alu_src_A <= '0';
-                    sc_mem_to_reg <= '1';
+                    sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
                     sc_alu_op <= "00";

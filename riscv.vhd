@@ -356,8 +356,8 @@ architecture riscv_arc of riscv is
                         );
 
     u_write_data_mux: mux21 port map(
-                                    dado_ent_0 => s_alu_reg_out,
-                                    dado_ent_1 => s_data_register_output,
+                                    dado_ent_0 => s_data_register_output,
+                                    dado_ent_1 => s_alu_reg_out,
                                     sele_ent => sc_mem_to_reg,
                                     dado_sai => s_reg_file_write_data
                                   );
