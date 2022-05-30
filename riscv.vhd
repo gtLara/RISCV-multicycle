@@ -225,7 +225,7 @@ architecture riscv_arc of riscv is
     ------------------- Entradas Mux A
 
     signal s_alu_in_imm : std_logic_vector(31 downto 0);
-    signal s_alu_in_constant : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
+    signal s_alu_in_constant : std_logic_vector(31 downto 0) := "00000000000000000000000000000100";
     signal s_alu_in_rs_2 : std_logic_vector(31 downto 0);
     signal s_alu_in_shifted_imm : std_logic_vector(31 downto 0);
 
@@ -334,8 +334,8 @@ architecture riscv_arc of riscv is
     u_alu_B_in_mux: mux41 port map(
                                     dado_ent_0 => s_alu_in_rs_2,
                                     dado_ent_1 => s_alu_in_constant,
-                                    dado_ent_2 => s_alu_in_imm,
-                                    dado_ent_3 => s_alu_in_shifted_imm,
+                                    dado_ent_2 => s_alu_in_shifted_imm,
+                                    dado_ent_3 => s_alu_in_imm,
                                     sele_ent => sc_alu_src_B,
                                     dado_sai => s_alu_B_in
                                   );
@@ -356,8 +356,8 @@ architecture riscv_arc of riscv is
                         );
 
     u_write_data_mux: mux21 port map(
-                                    dado_ent_0 => s_data_register_output,
-                                    dado_ent_1 => s_alu_reg_out,
+                                    dado_ent_1 => s_data_register_output,
+                                    dado_ent_0 => s_alu_reg_out,
                                     sele_ent => sc_mem_to_reg,
                                     dado_sai => s_reg_file_write_data
                                   );
