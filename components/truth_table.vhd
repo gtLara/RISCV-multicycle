@@ -8,7 +8,8 @@ entity truth_table is
     -- in
         funct3 : in std_logic_vector(2 downto 0);
         funct7 : in std_logic_vector(6 downto 0);
-        s_alu_op : std_logic_vector(1 downto 0) ;
+        s_alu_op : in std_logic_vector(1 downto 0) ;
+        clk : in std_logic; 
 
     -- out
       	sc_alu_control : out std_logic_vector(2 downto 0)
@@ -17,7 +18,7 @@ end entity;
 
 architecture truth_table_arc of truth_table is
 begin
-    process(funct3, funct7)
+    process(funct3, funct7, s_alu_op, clk)
     begin
 	 	--Tabela Verdade (ALU Control)
 		case s_alu_op is

@@ -41,6 +41,7 @@ architecture control_arc of control is
             funct3 : in std_logic_vector(2 downto 0);
             funct7 : in std_logic_vector(6 downto 0);
             s_alu_op : std_logic_vector(1 downto 0) ;
+            clk : in std_logic;
 
         -- out
             sc_alu_control : out std_logic_vector(2 downto 0)
@@ -99,6 +100,7 @@ architecture control_arc of control is
                         port map(
                                 funct3 => funct3,
                                 funct7 => funct7,
+                                clk => clk,
                                 s_alu_op => s_alu_op,
                                 sc_alu_control => sc_alu_control
                               );
@@ -130,7 +132,6 @@ architecture control_arc of control is
                     s_WE_program_counter <= '1';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '1';
-
 
                     sc_WE_reg_file <= '0';
 
@@ -431,9 +432,7 @@ architecture control_arc of control is
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
 
-                -- Next State
-                    state <= fetch;
-
+                -- Next State state <= fetch;
 		end case;
         end if;
     end process;
