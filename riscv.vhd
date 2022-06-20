@@ -8,18 +8,7 @@ use ieee.NUMERIC_STD.SHIFT_LEFT;
 entity riscv is
     port(
         clk : in std_logic;
-        set : in std_logic ;
-        sc_IorD : in std_logic ;
-        sc_WE_data : in std_logic ;
-        sc_WE_program_counter : in std_logic ;
-        sc_WE_memory : in std_logic ;
-        sc_WE_instruction_reg : in std_logic ;
-        sc_WE_reg_file : in std_logic ;
-        sc_alu_src_A : in std_logic ;
-        sc_mem_to_reg : in std_logic ;
-        sc_pc_src : in std_logic ;
-        sc_alu_src_B : in std_logic_vector(1 downto 0);
-        sc_alu_control : in std_logic_vector(2 downto 0)
+        set : in std_logic
         );
 end riscv;
 
@@ -28,6 +17,32 @@ architecture riscv_arc of riscv is
 -------------------------------------------------------------------------------
 -- Declaracao de componentes --------------------------------------------------
 -------------------------------------------------------------------------------
+
+    component control is
+        port(
+        -- in
+            opcode : in std_logic_vector(6 downto 0);
+            funct3 : in std_logic_vector(2 downto 0);
+            funct7 : in std_logic_vector(6 downto 0);
+            zero : in std_logic ;
+            neg : in std_logic ;
+            set : in std_logic ;
+            clk : in std_logic ;
+        -- out
+            sc_IorD : out std_logic ;
+            sc_WE_data : out std_logic ;
+            sc_WE_program_counter : out std_logic ;
+            sc_WE_memory : out std_logic ;
+            sc_WE_instruction_reg : out std_logic ;
+            sc_WE_reg_file : out std_logic ;
+            sc_alu_src_A : out std_logic ;
+            sc_mem_to_reg : out std_logic ;
+            sc_pc_src : out std_logic ;
+            sc_Zext : out std_logic ;
+            sc_alu_src_B : out std_logic_vector(1 downto 0) ;
+            sc_alu_control : out std_logic_vector(2 downto 0)
+            );
+    end component;
 
     component ula is
         generic (
@@ -38,7 +53,9 @@ architecture riscv_arc of riscv is
             entrada_a : in std_logic_vector((largura_dado - 1) downto 0);
             entrada_b : in std_logic_vector((largura_dado - 1) downto 0);
             seletor   : in std_logic_vector(2 downto 0);
-            saida     : out std_logic_vector((largura_dado - 1) downto 0)
+            saida     : out std_logic_vector((largura_dado - 1) downto 0);
+            zero     : out std_logic;
+            negativo     : out std_logic
         );
     end component;
 
@@ -153,6 +170,23 @@ architecture riscv_arc of riscv is
 ---- DATAPATH SIGNALS ---------------------------------------------------------
 -------------------------------------------------------------------------------
 
+------------------------------
+------- Sinais de Controle ---
+------------------------------
+
+    signal sc_IorD : std_logic ;
+    signal sc_WE_data : std_logic ;
+    signal sc_WE_program_counter : std_logic ;
+    signal sc_WE_memory : std_logic ;
+    signal sc_WE_instruction_reg : std_logic ;
+    signal sc_WE_reg_file : std_logic ;
+    signal sc_alu_src_A : std_logic ;
+    signal sc_mem_to_reg : std_logic ;
+    signal sc_pc_src : std_logic ;
+    signal sc_Zext : std_logic ;
+    signal sc_alu_src_B : std_logic_vector(1 downto 0) ;
+    signal sc_alu_control : std_logic_vector(2 downto 0) ;
+
 ---------------------------
 ------- Program Counter ---
 ---------------------------
@@ -244,6 +278,8 @@ architecture riscv_arc of riscv is
  ------------ Saída ALU
 
     signal s_alu_out : std_logic_vector(31 downto 0);
+    signal s_alu_zero_out : std_logic ;
+    signal s_alu_neg_out : std_logic ;
 
 -------------------------
 -------- ALU Register ---
@@ -260,6 +296,30 @@ architecture riscv_arc of riscv is
 --------------------------------------------------------------------------
 -- Instanciacao de componentes -------------------------------------------
 --------------------------------------------------------------------------
+
+    u_control: control port map(
+                                opcode => s_stored_instruction(6 downto 0),
+                                funct3 => s_stored_instruction(14 downto 12),
+                                funct7 => s_stored_instruction(31 downto 25),
+                                zero => s_alu_zero_out,
+                                neg => s_alu_neg_out,
+
+                                set => set, 
+                                clk => clk,
+
+                                sc_IorD => sc_IorD,
+                                sc_WE_data => sc_WE_data,
+                                sc_WE_program_counter => sc_WE_program_counter,
+                                sc_WE_memory => sc_WE_memory,
+                                sc_WE_instruction_reg => sc_WE_instruction_reg,
+                                sc_WE_reg_file => sc_WE_reg_file,
+                                sc_alu_src_A => sc_alu_src_A,
+                                sc_mem_to_reg => sc_mem_to_reg,
+                                sc_pc_src => sc_pc_src,
+                                sc_Zext => sc_Zext,
+                                sc_alu_src_B => sc_alu_src_B,
+                                sc_alu_control => sc_alu_control
+                               );
 
     u_program_counter: pc port map(
                                    clk => clk,
@@ -348,8 +408,10 @@ architecture riscv_arc of riscv is
     u_ALU: ula port map(
                         entrada_a => s_alu_A_in,
                         entrada_b => s_alu_B_in,
-                        seletor   => sc_alu_control,
-                        saida     => s_alu_out
+                        seletor => sc_alu_control,
+                        saida => s_alu_out,
+                        zero => s_alu_zero_out,
+                        negativo => s_alu_neg_out 
                         );
 
     u_write_data_mux: mux21 port map(
