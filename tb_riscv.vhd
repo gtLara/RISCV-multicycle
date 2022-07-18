@@ -13,9 +13,11 @@ architecture tb of tb_riscv is
 --------------------------------------------------------------------------
 
     component riscv is
+        generic(n_peripherals: integer := 2);
         port(
             clk : in std_logic;
-            set : in std_logic
+            set : in std_logic;
+            interruption_requests : in std_ulogic_vector(n_peripherals - 1 downto 0)
             );
     end component;
 
@@ -28,6 +30,7 @@ architecture tb of tb_riscv is
 
     signal clk : std_logic := '0';
     signal set : std_logic := '1';
+    signal interruption_requests : std_ulogic_vector(1 downto 0) := "10";
 
 --------------------------------------------------------------------------
 -- Início de arquitetura -------------------------------------------------
@@ -41,16 +44,18 @@ architecture tb of tb_riscv is
 
     uut: riscv port map(
                         clk  => clk,
-                        set => set
+                        set => set,
+                        interruption_requests => interruption_requests
                         );
 
     clk <= not clk after clock_period / 2;
+    interruption_requests <= "01";
 
     testbench: process
 
         begin
-
         set <= '0';
+
 
         wait for clock_period;
 
