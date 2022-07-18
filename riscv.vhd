@@ -6,9 +6,11 @@ use ieee.NUMERIC_STD.SHIFT_LEFT;
 
 
 entity riscv is
+    generic(n_peripherals: integer := 2);
     port(
         clk : in std_logic;
-        set : in std_logic
+        set : in std_logic; 
+        interruption_requests : in std_ulogic_vector(n_peripherals - 1 downto 0)
         );
 end riscv;
 
@@ -37,10 +39,28 @@ architecture riscv_arc of riscv is
             sc_WE_reg_file : out std_logic ;
             sc_alu_src_A : out std_logic ;
             sc_mem_to_reg : out std_logic ;
-            sc_pc_src : out std_logic ;
+            sc_pc_src : out std_logic_vector(1 downto 0) ;
             sc_Zext : out std_logic ;
             sc_alu_src_B : out std_logic_vector(1 downto 0) ;
-            sc_alu_control : out std_logic_vector(2 downto 0)
+            sc_alu_control : out std_logic_vector(2 downto 0) ;
+            sc_rar : out std_logic
+            );
+    end component;
+
+    component interruption_handler is
+        generic(n_peripherals: integer := 2);
+        port (
+            -- in
+                clk : in std_ulogic;
+                ack : in std_ulogic;
+                interruption_requests : in std_ulogic_vector(n_peripherals - 1 downto 0);
+                original_instruction_address : in std_logic_vector(11 downto 0);
+                interruption_enable_write : in std_ulogic_vector(n_peripherals - 1 downto 0);
+                sc_rar : in std_logic ;
+            -- out
+                interruption_enable_read : out std_ulogic_vector(n_peripherals - 1 downto 0);
+                return_address : out std_logic_vector(11 downto 0);
+                isr_address : out std_ulogic_vector(11 downto 0)
             );
     end component;
 
@@ -60,12 +80,12 @@ architecture riscv_arc of riscv is
     end component;
 
     component register_block is
-
+        generic(size : integer := 32);
         port(
              we : in std_logic;
-             next_input : in std_logic_vector(31 downto 0);
+             next_input : in std_logic_vector(size - 1 downto 0);
              clk : in std_logic;
-             last_input : out std_logic_vector(31 downto 0)
+             last_input : out std_logic_vector(size - 1 downto 0)
             );
 
     end component;
@@ -182,8 +202,9 @@ architecture riscv_arc of riscv is
     signal sc_WE_reg_file : std_logic ;
     signal sc_alu_src_A : std_logic ;
     signal sc_mem_to_reg : std_logic ;
-    signal sc_pc_src : std_logic ;
+    signal sc_pc_src : std_logic_vector(1 downto 0) ;
     signal sc_Zext : std_logic ;
+    signal sc_rar : std_logic ;
     signal sc_alu_src_B : std_logic_vector(1 downto 0) ;
     signal sc_alu_control : std_logic_vector(2 downto 0) ;
 
@@ -195,7 +216,7 @@ architecture riscv_arc of riscv is
 
 -- possui 32 bits para compatibilidade com saída de ALU. truncado na entrada de PC
 
-    signal s_next_instruction_address : std_logic_vector(31 downto 0);
+    signal s_next_instruction_address : std_logic_vector(11 downto 0);
 
 -------------- Saída
 
@@ -208,7 +229,7 @@ architecture riscv_arc of riscv is
 
 -------------- Entrada
 
-    signal s_memory_address : std_logic_vector(11 downto 0);
+    signal s_memory_address : std_logic_vector(31 downto 0);
 
 -------------- Saída
 
@@ -287,6 +308,15 @@ architecture riscv_arc of riscv is
 
     signal s_alu_reg_out : std_logic_vector(31 downto 0);
 
+---------------------------------
+-------- Interruption Handler ---
+---------------------------------
+
+    signal s_isr_address : std_ulogic_vector(11 downto 0);
+    signal s_return_address : std_logic_vector(11 downto 0);
+    signal s_interruption_enable_write : std_ulogic_vector(1 downto 0) := "11";
+    signal s_interruption_enable_read : std_ulogic_vector(1 downto 0);
+
 --------------------------------------------------------------------------
 -- Definicao de datapath -------------------------------------------------
 --------------------------------------------------------------------------
@@ -318,12 +348,25 @@ architecture riscv_arc of riscv is
                                 sc_pc_src => sc_pc_src,
                                 sc_Zext => sc_Zext,
                                 sc_alu_src_B => sc_alu_src_B,
-                                sc_alu_control => sc_alu_control
+                                sc_alu_control => sc_alu_control,
+                                sc_rar => sc_rar
                                );
+
+    u_interruption_handler: interruption_handler port map (
+                clk => clk,
+                ack => '0',
+                interruption_requests => interruption_requests,
+                original_instruction_address => s_current_instruction_address,
+                interruption_enable_write => s_interruption_enable_write,
+                sc_rar => sc_rar,
+                interruption_enable_read => s_interruption_enable_read,
+                return_address => s_return_address,
+                isr_address => s_isr_address
+            );
 
     u_program_counter: pc port map(
                                    clk => clk,
-                                   entrada => s_next_instruction_address(11 downto 0),
+                                   entrada => s_next_instruction_address,
                                    saida => s_current_instruction_address,
                                    we =>  sc_WE_program_counter,
                                    reset => set
@@ -429,29 +472,22 @@ architecture riscv_arc of riscv is
                                                 );
 
     u_mux_memory_address: mux21
-                                generic map (largura_dado => 12)
+                                generic map (largura_dado => 32)
                                 port map(
-                                        dado_ent_0 => s_current_instruction_address,
-                                        dado_ent_1 => s_alu_reg_out(11 downto 0),
+                                        dado_ent_0 => s_current_instruction_address_ext,
+                                        dado_ent_1 => s_alu_reg_out,
                                         sele_ent => sc_IorD,
                                         dado_sai => s_memory_address
                                       );
 
-    u_mux_instruction_address: mux21
-                                    generic map (largura_dado => 32)
+    u_mux_instruction_address: mux41
+                                    generic map (largura_dado => 12)
                                     port map(
-                                            dado_ent_0 => s_alu_out,
-                                            dado_ent_1 => s_alu_reg_out,
+                                            dado_ent_0 => s_alu_out(11 downto 0),
+                                            dado_ent_1 => s_alu_reg_out(11 downto 0),
+                                            dado_ent_2 => to_stdlogicvector(s_isr_address),
+                                            dado_ent_3 => s_return_address,
                                             sele_ent => sc_pc_src,
                                             dado_sai => s_next_instruction_address
                                           );
-
---    u_mux_ZExt: mux21
---                                port map(
---                                        dado_ent_0 => s_mux_PCSrc_out,
---                                        dado_ent_1 => s_ZExt_out
---                                        sele_ent => sc_ZExt,
---                                        dado_sai => s_next_PC
---                                      );
-
 end riscv_arc;
