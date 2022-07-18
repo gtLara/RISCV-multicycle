@@ -17,6 +17,7 @@ entity interruption_handler is
 
             sc_rar : in std_logic;
 
+            interrupt_flag : out std_ulogic;
             interruption_enable_read : out std_ulogic_vector(n_peripherals - 1 downto 0);
             return_address : out std_logic_vector(11 downto 0);
             isr_address : out std_ulogic_vector(11 downto 0));
@@ -93,7 +94,6 @@ architecture interruption_handler_arc of interruption_handler is
 
     signal s_current_interruption : std_ulogic_vector(n_peripherals-1 downto 0) ;
     signal s_pending_interruptions : std_ulogic_vector(n_peripherals-1 downto 0) ;
-    signal s_interrupt : std_ulogic ;
 
     begin
 
@@ -111,7 +111,7 @@ architecture interruption_handler_arc of interruption_handler is
                                   Pending => s_pending_interruptions,
                                   Current => s_current_interruption,
 
-                                  Interrupt => s_interrupt,
+                                  Interrupt => interrupt_flag,
                                   Acknowledge => ack,
                                   Clear_pending => '0'
                                 );
