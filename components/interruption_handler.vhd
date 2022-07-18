@@ -30,7 +30,6 @@ architecture interruption_handler_arc of interruption_handler is
 -------------------------------------------------------------------------------
 
     component register_block is -- registrador generalizado
-
         generic(size : integer := 12);
         port(
              we : in std_logic;
@@ -134,6 +133,7 @@ architecture interruption_handler_arc of interruption_handler is
                                 );
 
     u_return_address_reg: register_block
+                        generic map ( size => 12 )
                         port map(
                              we => sc_rar,
                              next_input => original_instruction_address,
