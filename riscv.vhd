@@ -9,7 +9,7 @@ entity riscv is
     generic(n_peripherals: integer := 2);
     port(
         clk : in std_logic;
-        set : in std_logic; 
+        set : in std_logic;
         interruption_requests : in std_ulogic_vector(n_peripherals - 1 downto 0)
         );
 end riscv;
@@ -30,6 +30,7 @@ architecture riscv_arc of riscv is
             neg : in std_logic ;
             set : in std_logic ;
             clk : in std_logic ;
+            interrupt : in std_logic ;
         -- out
             sc_IorD : out std_logic ;
             sc_WE_data : out std_logic ;
@@ -56,7 +57,8 @@ architecture riscv_arc of riscv is
                 interruption_requests : in std_ulogic_vector(n_peripherals - 1 downto 0);
                 original_instruction_address : in std_logic_vector(11 downto 0);
                 interruption_enable_write : in std_ulogic_vector(n_peripherals - 1 downto 0);
-                sc_rar : in std_logic ;
+                sc_rar : in std_logic;
+                interrupt_flag : in std_logic;
             -- out
                 interruption_enable_read : out std_ulogic_vector(n_peripherals - 1 downto 0);
                 return_address : out std_logic_vector(11 downto 0);
@@ -312,6 +314,7 @@ architecture riscv_arc of riscv is
 -------- Interruption Handler ---
 ---------------------------------
 
+    signal s_interrupt_flag : std_ulogic;
     signal s_isr_address : std_ulogic_vector(11 downto 0);
     signal s_return_address : std_logic_vector(11 downto 0);
     signal s_interruption_enable_write : std_ulogic_vector(1 downto 0) := "11";
@@ -333,8 +336,9 @@ architecture riscv_arc of riscv is
                                 funct7 => s_stored_instruction(31 downto 25),
                                 zero => s_alu_zero_out,
                                 neg => s_alu_neg_out,
+                                interrupt => s_interrupt_flag,
 
-                                set => set, 
+                                set => set,
                                 clk => clk,
 
                                 sc_IorD => sc_IorD,
@@ -355,6 +359,7 @@ architecture riscv_arc of riscv is
     u_interruption_handler: interruption_handler port map (
                 clk => clk,
                 ack => '0',
+                interrupt_flag => s_interrupt_flag,
                 interruption_requests => interruption_requests,
                 original_instruction_address => s_current_instruction_address,
                 interruption_enable_write => s_interruption_enable_write,
@@ -454,7 +459,7 @@ architecture riscv_arc of riscv is
                         seletor => sc_alu_control,
                         saida => s_alu_out,
                         zero => s_alu_zero_out,
-                        negativo => s_alu_neg_out 
+                        negativo => s_alu_neg_out
                         );
 
     u_write_data_mux: mux21 port map(
