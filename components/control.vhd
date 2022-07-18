@@ -13,6 +13,7 @@ entity control is
         neg : in std_logic ;
         set : in std_logic ;
         clk : in std_logic ;
+        interrupt : in std_logic ;
     -- out
         sc_IorD : out std_logic ;
         sc_WE_data : out std_logic ;
@@ -26,7 +27,7 @@ entity control is
         sc_Zext : out std_logic ;
         sc_alu_src_B : out std_logic_vector(1 downto 0) ;
         sc_alu_control : out std_logic_vector(2 downto 0) ;
-        sc_rar : out std_logic 
+        sc_rar : out std_logic
         );
 end entity;
 
@@ -201,7 +202,9 @@ architecture control_arc of control is
                     sc_mem_to_reg <= '0';
                     sc_Zext <= '0';
                     sc_alu_src_B <= "10";
+
                     s_alu_op <= "00";
+
 
                 -- Next State
                     state <= fetch;
@@ -286,6 +289,21 @@ architecture control_arc of control is
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
 
+                    case interrupt is
+                        when '0' =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                        when '1' =>
+                            sc_pc_src <= "10";
+                            sc_rar <= '1';
+
+                        when others =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                    end case;
+
                 -- Next State
                     state <= fetch;
 
@@ -325,6 +343,21 @@ architecture control_arc of control is
                     sc_Zext <= '0';
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
+
+                    case interrupt is
+                        when '0' =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                        when '1' =>
+                            sc_pc_src <= "10";
+                            sc_rar <= '1';
+
+                        when others =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                    end case;
 
                 -- Next State
                     state <= fetch;
@@ -370,6 +403,21 @@ architecture control_arc of control is
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
 
+                    case interrupt is
+                        when '0' =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                        when '1' =>
+                            sc_pc_src <= "10";
+                            sc_rar <= '1';
+
+                        when others =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                    end case;
+
                 -- Next State
                     state <= fetch;
 
@@ -414,6 +462,21 @@ architecture control_arc of control is
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
 
+                    case interrupt is
+                        when '0' =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                        when '1' =>
+                            sc_pc_src <= "10";
+                            sc_rar <= '1';
+
+                        when others =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                    end case;
+
                 -- Next State
                     state <= fetch;
 
@@ -434,7 +497,24 @@ architecture control_arc of control is
                     sc_alu_src_B <= "00";
                     s_alu_op <= "00";
 
-                -- Next State state <= fetch;
+                    case interrupt is
+                        when '0' =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                        when '1' =>
+                            sc_pc_src <= "10";
+                            sc_rar <= '1';
+
+                        when others =>
+                            sc_pc_src <= "00";
+                            sc_rar <= '0';
+
+                    end case;
+
+                -- Next State
+
+                    state <= fetch;
 		end case;
         end if;
     end process;
