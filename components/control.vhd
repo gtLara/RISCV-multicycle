@@ -22,10 +22,11 @@ entity control is
         sc_WE_reg_file : out std_logic ;
         sc_alu_src_A : out std_logic ;
         sc_mem_to_reg : out std_logic ;
-        sc_pc_src : out std_logic ;
+        sc_pc_src : out std_logic_vector(1 downto 0) ;
         sc_Zext : out std_logic ;
         sc_alu_src_B : out std_logic_vector(1 downto 0) ;
-        sc_alu_control : out std_logic_vector(2 downto 0)
+        sc_alu_control : out std_logic_vector(2 downto 0) ;
+        sc_rar : out std_logic 
         );
 end entity;
 
@@ -140,8 +141,9 @@ architecture control_arc of control is
                     sc_Zext <= '0';
                     sc_alu_src_B <= "01";
                     s_alu_op <= "00";
-                    sc_pc_src <= '0';
                     s_branch <= '0';
+                    sc_pc_src <= "00";
+                    sc_rar <= '1';
 
                 -- Next State
                     state <= decode;

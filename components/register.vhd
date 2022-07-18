@@ -5,19 +5,19 @@ use ieee.NUMERIC_STD.all;
 use ieee.NUMERIC_STD_UNSIGNED.all;
 
 entity register_block is -- registrador generalizado
-
+    generic(size : integer := 32);
     port(
          we : in std_logic;
-         next_input : in std_logic_vector(31 downto 0);
+         next_input : in std_logic_vector(size - 1 downto 0);
          clk : in std_logic;
-         last_input : out std_logic_vector(31 downto 0)
+         last_input : out std_logic_vector(size - 1 downto 0)
         );
 
 end register_block;
 
 architecture register_arc of register_block is
 
-    signal stored_signal: std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+    signal stored_signal: std_logic_vector(size - 1 downto 0) := (others => '0') ;
 
     begin
         -- processo de escrita
