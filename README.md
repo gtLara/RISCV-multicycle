@@ -73,12 +73,22 @@ componente [riscv](riscv.vhd) durante seu [testbench](tb_riscv.vhd).
 
 Nesse teste executamos o seguinte programa.
 
+```
+addi x1, x0, 1
+addi x2, x0, 2
+add x3, x2, x1
+sw x3, 0(x0)
+lw x0, 0(x0)
+```
+
 Correspondendo às seguintes instruções.
+
+
 
 Podemos averiguar o comportamento esperado analisando os seguintes sinais
 do testbench.
 
-Onde temos que ...
+
 
 ### Controladora de Interrupções
 
@@ -128,7 +138,19 @@ permitem observar o funcionamento adequado do componente.
 
 ![handlertb](imagens/handler_tb.png?raw=true)
 
-### Integraçaõ de Interrupções em Datapath
+### Integração de Interrupções em Datapath
+
+A integração da controladora de interrupções no datapath acontece por duas
+simples mudanças. Inicialmente o multiplexador que determina o endereço de
+entrada do PC é expandido de forma a incluir duas entradas: o endereço de uma
+ISR e o endereço armazenada em no RAR. Além disso um nova instrução é
+adicionada para retornar o fluxo de execução para o endereço armazenado no RAR.
+Essa instrução é a última de cada ISR, intitulada `roi` (*return to original
+instruction*), e realiza a simples ação de escrever o endereço contigo no RAR
+no PC.
+
+A simplicidade das mudanças não demanda um testbench próprio especialmente
+considerando que o código foi escrito de forma a maximizar legibilidade.
 
 ### Integração de Interrupções em Controladora
 
