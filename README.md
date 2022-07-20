@@ -75,20 +75,37 @@ Nesse teste executamos o seguinte programa.
 
 ```
 addi x1, x0, 1
-addi x2, x0, 2
-add x3, x2, x1
-sw x3, 0(x0)
-lw x0, 0(x0)
+addi x2, x0, 8610
+add x7, x2, x1
+sw x7, 0(x0)
+lw x3, 0(x0)
 ```
 
 Correspondendo às seguintes instruções.
 
+```
+00000000000100000000000010010011
+00000000001000000000000100010011
+00000000001000001000001110110011
+00000000000000000010001110100011
+00000000000000001010000000000011
+```
+
+Podemos averiguar o comportamento esperado analisando inicialmente os
+sinais fundamentais do testbech: o valor de PC e o fluxo de instruções.
+Obsevamos pela imagem abaixo que o PC é incrementado como esperado e as
+instruções são lidas corretamente.
 
 
-Podemos averiguar o comportamento esperado analisando os seguintes sinais
-do testbench.
+![integracaotb1](imagens/integracao_tb_1.png?raw=true)
 
+Um teste mais detalhado é realizado nas seguintes imagens, onde inicialmente
+conseguimos observar a progressão apropriada de estados da controladora e por
+fim o resultado do programa com o dado 8611 no registrador x3.
 
+![integracaotb2](imagens/integracao_tb_2.png?raw=true)
+
+![integracaotb3](imagens/integracao_tb_3.png?raw=true)
 
 ### Controladora de Interrupções
 
@@ -172,14 +189,16 @@ A inclusão desse detalhe foi simples - em cada estado que progride para fetch
 em seguida foi realizada uma verificação de ocorrência de interrupção. Se
 houver interrupção em processamento pela controladora as ações de escrita no
 RAR e chaveamento de conteúdo de escrito no PC para a saída da controladora
-são tomadas.
-
-O teste dessa inclusão pode ser realizado blablablablah
-
-TB !
+são tomadas. A verificação do funcionamento da integração pode ser
+realizado juntamente da verificação de integração de periféricas, última
+subseção de simulação, portanto o testbench dessa integração será omitido.
 
 ### Controladora de Interupções - Timer
 
 ### Controladora de Interupções - GPIO
 
 ### Controladora de Interupções - UART
+
+### Integração de Periféricos
+
+## Observações Finais
