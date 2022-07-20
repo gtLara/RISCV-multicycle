@@ -27,13 +27,16 @@ de estados (HLFSM) é ilustrado pela figura abaixo.
 
 ![controle](imagens/controle.png?raw=true)
 
-A máquina de estados é implementada no componente [control](control.vhd).
+A máquina de estados é implementada no componente [control](control.vhd) e
+a verificação de seu funcionamento é apresentada na subseção seguinte.
 
 ## Simulações
 
-As simulações realizadas até então são simples: constam apenas as propagação
-apropriada de sinais no datapath e verificação de funcionamento da instrução
-`lw`. A seguinte imagem apresenta a execução da instrução
+### Datapath
+
+A simulação realizada para verificar o datapath é simples: observar a
+propagação apropriada de sinais no datapath e verificação de funcionamento da
+instrução `lw`. A seguinte imagem apresenta a execução da instrução
 
 `lw x4, 4(3)`
 
@@ -45,4 +48,116 @@ montada para binário em
 
 Observamos na figura que o resultado da ULA está como esperado e a leitura do
 contador de programas também, assim como o parsing das instruções e os sinais
-de controle.
+de controle. Outras instruções foram observadas da mesma maneira, resultando
+em comportamento adequado.
+
+### Controle
+
+A verificação do funcionamento do controle pode ser realizada pela
+observação dos sinais de saída em resposta à instruções simuladas pelo
+testbench do componente. Observamos que a saída dos sinais de controle em cada
+estado é condizente com os sinais indicados pela máquina de estados finitos
+estabelecida no projeto do controle - que por sua vez é condizente com livro do
+Harris.
+
+O caso específico avaliado no testbench é o processamento de uma instrução de
+branch.
+
+![controletb](imagens/controle_tb.png?raw=true)
+
+### Integração Datapath + Controle - CPU
+
+A verificação da integração entre datapath e controle, isso é, da CPU de fato,
+pode ser realizada pela observação do comportamento dos sinais internos do
+componente [riscv](riscv.vhd) durante seu [testbench](tb_riscv.vhd).
+
+Nesse teste executamos o seguinte programa.
+
+Correspondendo às seguintes instruções.
+
+Podemos averiguar o comportamento esperado analisando os seguintes sinais
+do testbench.
+
+Onde temos que ...
+
+### Controladora de Interrupções
+
+A controladora de interrupções foi implementada de forma simplificada, com
+ordem de prioridade constante - e portanto ausência de FIFO.
+
+A controladora foi montada a partir de cinco componentes - um registrador
+responsável por armazenar o endereço da instrução anterior à ocorrência de uma
+interrupção (RAR), um registrador responsável por indicar quais interrupções
+estão habilitadas (IER), uma *look up table* responsável por traduzir
+requisições de interrupções em endereços de memória da ISR correspondente.
+
+As simplificações empregadas foram a remoção completa da FIFO - justificável
+uma vez que a ordem de prioridade é fixa - e a remoção da dinâmica de dupla
+indireção na determinação do endereço do ISR. Nessa última simplificação a
+controladora armazena endereços das ISRs diretamente ao invés de endereços de
+endereços da ISR. Isso foi feito com intuito de simplificar o projeto e pelo
+fato da camada adicional de indireção não ser tão necessária nesse contexto -
+onde o posicionamento das ISRs pode ser mantido constante.
+
+A parte central da controladora é o [módulo de resolução de prioridades](componentes),
+fornecido pelo professor. Esse componente resolve prioridade em um vetor
+binário filtrando a entrada para produzir uma saída que prioriza o bit menos
+significativo da entrada, sob ação de uma máscara que permite controlar quais
+bits fazem parte desse processo. Esse componente recebe como entrada a saída
+do registrador IER como a máscara do processo de priorização e o vetor de
+requisição de interrupção como entrada de interrupção. A saída desse processo
+é um vetor *one-hot* que indica qual interrupção será processada de acordo com
+a posição do bit contendo 1. O componente natural para traduzir esse vetor em
+um endereço para execução da ISR é uma loop up table que é implementada de
+forma estática e puramente combinacional. Por fim a controladora possui o RAR,
+responsável por armazenar o endereço de retorno ao programa executado antes da
+ocorrência da interrupção. Esse registrador é lido e escrito, com escrita sendo
+mediada pelo módulo de controle da CPU.
+
+A verificação do funcionamento básico da controladora de interrupções pode
+ser realizada analisando os sinais de seu [testbench](components/tb_interruption_handler.vhd).
+
+Antes de analisar o testbench é interessante observar que seu comportamento
+esperado é receber um vetor binário indicando ocorrência de uma interrupção e
+retornar a ISR dessa instrução, como definida da *look up table*. A ocorrência
+de duas interrupções simultâneas deve retornar a ISR de maior prioridade -
+definida no nosso caso como a do timer.
+
+Os sinais destacados na simulação abaixo, mencionados no parágrafo anterior,
+permitem observar o funcionamento adequado do componente.
+
+![handlertb](imagens/handler_tb.png?raw=true)
+
+### Integraçaõ de Interrupções em Datapath
+
+### Integração de Interrupções em Controladora
+
+Como já observado é necessário integrar alguma lógica de processamento de
+interrupções na controladora porque o multiplexador responsável por determinar
+o endereço de escrita no PC passa a ter mais entradas e é necessário decidir o
+momento de escrita no registrador RAR, interno à controladora de interrupção.
+
+Ambas alterações demandam a decisão de qual etapa do multiciclo preparar o
+processador para o processamento da interrupção, isso, é armazenar a próxima
+instruçaço no RAR e escrever o endereço da ISR no PC. Foi decidido que isso
+deve ser feito imediamente antes do estado de fetch pelo fato de sua execução
+resultar na propação da instrução presente no endereço armazenado no PC. Como
+o processamento da controladora de interrupções é totalmente combinacional
+a resolução da ISR é realizada dentro de um ciclo de clock e torna coerente a
+decisão do momento de escrita nos registradores relevantes.
+
+A inclusão desse detalhe foi simples - em cada estado que progride para fetch
+em seguida foi realizada uma verificação de ocorrência de interrupção. Se
+houver interrupção em processamento pela controladora as ações de escrita no
+RAR e chaveamento de conteúdo de escrito no PC para a saída da controladora
+são tomadas.
+
+O teste dessa inclusão pode ser realizado blablablablah
+
+TB !
+
+### Controladora de Interupções - Timer
+
+### Controladora de Interupções - GPIO
+
+### Controladora de Interupções - UART
