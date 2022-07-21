@@ -42,7 +42,7 @@ instrução `lw`. A seguinte imagem apresenta a execução da instrução
 
 montada para binário em
 
-00000000010000011010111110000011
+`00000000010000011010111110000011`
 
 ![lw](imagens/simulacao_simples_lw.png?raw=true)
 
@@ -74,23 +74,21 @@ componente [riscv](riscv.vhd) durante seu [testbench](tb_riscv.vhd).
 Nesse teste executamos o seguinte programa.
 
 ```
-addi x3, x0, 1
-addi x3, x0, 8610
-add x3, x3, x3
+addi x1, x0, 1
+addi x3, x0, 860
+add x3, x3, x1
 sw x3, 0(x0)
 lw x3, 0(x0)
 ```
 
 Correspondendo às seguintes instruções.
 
-REFAZER !!!
-
 ```
 00000000000100000000000010010011
-00000000001000000000000100010011
-00000000001000001000001110110011
+00110101110000000000000010010011
+00000000000000011000000110110011
 00000000000000000010001110100011
-00000000000000001010000000000011
+00000000000000000010000110000011
 ```
 
 Podemos averiguar o comportamento esperado analisando inicialmente os
