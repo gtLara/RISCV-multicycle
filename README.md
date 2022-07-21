@@ -25,7 +25,7 @@ Os sinais de controle do datapath são emitidos por uma máquina de estados
 finitos distinta em nível de abstração. O projeto em alto nível da máquina
 de estados (HLFSM) é ilustrado pela figura abaixo.
 
-![controle](imagens/controle.png?raw=true)
+![controle](imagens/controle.jpg?raw=true)
 
 A máquina de estados é implementada no componente [control](control.vhd) e
 a verificação de seu funcionamento é apresentada na subseção seguinte.
@@ -214,7 +214,8 @@ periférico é testado no tesbench associado e a verificação de seu funcioname
 
 O periférico temporizador completo foi implementado de forma mais simples do
 que proposto no roteiro, sendo usado apenas como um temporizador e não um
-contador.
+contador. Nesse periférico o limite da contagem é armazenado em um registrador
+a qual o usuário tem acesso.
 
 
 ### GPIO
@@ -232,7 +233,20 @@ controladora de interrupções.
 ### Integração de Periféricos - Timer Básico
 
 A integração de um periférico consistindo de um timer básico foi realizada
-como mencionado no parágrafo anterior.
+como mencionado no parágrafo anterior. A provocação da interrupção no caso do
+timer básico foi o sinal que indica que o contador interno atingiu o valor
+limite informado pelo usuário.
+
+Observamos na figura abaixo, extraída da simulação de integração
+(tb_timer_riscv), que o fluxo de interrupção ocorre como desejado: após atingir
+o limite estabelecido de pulsos de clock o timer envia um sinal de interrupção
+para o processador que por meio da controladora de interrupções interpreta esse
+sinal e atualiza o endereço do PC para a ISR correspondente, salvando enquanto
+isso o valor do próximo endereço do PC no RAR, dentro da controladora. O
+retorno do fluxo ao RAR é realizado por meio de uma instrução contida na RAR,
+como explicado anteriormente.
+
+![timerintegrationtb](imagens/timer_integration_tb.png?raw=true)
 
 ### Notas sobre integração de periféricos e interrupções
 
