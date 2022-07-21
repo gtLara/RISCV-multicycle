@@ -74,14 +74,16 @@ componente [riscv](riscv.vhd) durante seu [testbench](tb_riscv.vhd).
 Nesse teste executamos o seguinte programa.
 
 ```
-addi x1, x0, 1
-addi x2, x0, 8610
-add x7, x2, x1
-sw x7, 0(x0)
+addi x3, x0, 1
+addi x3, x0, 8610
+add x3, x3, x3
+sw x3, 0(x0)
 lw x3, 0(x0)
 ```
 
 Correspondendo às seguintes instruções.
+
+REFAZER !!!
 
 ```
 00000000000100000000000010010011
@@ -190,15 +192,48 @@ em seguida foi realizada uma verificação de ocorrência de interrupção. Se
 houver interrupção em processamento pela controladora as ações de escrita no
 RAR e chaveamento de conteúdo de escrito no PC para a saída da controladora
 são tomadas. A verificação do funcionamento da integração pode ser
-realizado juntamente da verificação de integração de periféricas, última
-subseção de simulação, portanto o testbench dessa integração será omitido.
+realizado por um testbench incrementado do processador, que alimenta uma
+interrupção como entrada e espera observar um chaveamento para o endereço
+adequado da ISR correspondente. A interrupção alimentada foi `01`
+correspondendo à timer e o endereço associado à ISR foi definido em
+`000000011111`. Observamos nos sinais destacados abaixo que a integração da
+controladora foi bem sucedida.
 
-### Controladora de Interupções - Timer
+![integracaohandlertb](imagens/integracao_controladora.png?raw=true)
 
-### Controladora de Interupções - GPIO
+### Timer Básico
 
-### Controladora de Interupções - UART
+O temporizador básico é essencialmente um contador que dispara um sinal
+ao valor de sua contagem atingir um valor inserido como entrada. Esse
+periférico é testado no tesbench associado e a verificação de seu funcionamento
+é prontamente realizado por inspeção da figura abaixo.
+
+![timertb](imagens/timer_tb.png?raw=true)
+
+### Timer Completo
+
+O periférico temporizador completo foi implementado de forma mais simples do
+que proposto no roteiro, sendo usado apenas como um temporizador e não um
+contador.
+
+
+### GPIO
+
+### UART
 
 ### Integração de Periféricos
+
+O processo de integração de periféricos é realizado instanciando componentes
+adicionais, correspondendo aos periféricos, no testbench da CPU desenvolvida.
+Em seguida o periférico provoca uma interrupção de alguma forma que é
+encaminhada para a CPU que por sua vez processa a interrupção por meio da
+controladora de interrupções.
+
+### Integração de Periféricos - Timer Básico
+
+A integração de um periférico consistindo de um timer básico foi realizada
+como mencionado no parágrafo anterior.
+
+### Notas sobre integração de periféricos e interrupções
 
 ## Observações Finais
