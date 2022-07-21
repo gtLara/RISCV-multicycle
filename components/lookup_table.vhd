@@ -19,10 +19,10 @@ begin
 		case current_interruption is
 
 			when "01"=>
-                isr_address <= "111100000000"; -- gpio
+                isr_address <= "000000011111"; -- gpio
 
 			when "10"=>
-                isr_address <= "111110000000"; -- timer
+                isr_address <= "000000111111"; -- timer
 
 			when others =>
                 isr_address  <=  "UUUUUUUUUUUU";  -- deadcase
