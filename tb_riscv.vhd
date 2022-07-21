@@ -30,7 +30,7 @@ architecture tb of tb_riscv is
 
     signal clk : std_logic := '0';
     signal set : std_logic := '1';
-    signal interruption_requests : std_ulogic_vector(1 downto 0) := "10";
+    signal interruption_requests : std_ulogic_vector(1 downto 0) := "00";
 
 --------------------------------------------------------------------------
 -- Início de arquitetura -------------------------------------------------
@@ -49,15 +49,16 @@ architecture tb of tb_riscv is
                         );
 
     clk <= not clk after clock_period / 2;
-    interruption_requests <= "01";
 
     testbench: process
 
         begin
         set <= '0';
 
-
         wait for clock_period;
+        interruption_requests <= "01";
+        wait for clock_period;
+        interruption_requests <= "00";
 
     end process testbench;
 
