@@ -17,6 +17,7 @@ entity control is
     -- out
         sc_IorD : out std_logic ;
         sc_WE_data : out std_logic ;
+        sc_WE_data_reg : out std_logic ;
         sc_WE_program_counter : out std_logic ;
         sc_WE_memory : out std_logic ;
         sc_WE_instruction_reg : out std_logic ;
@@ -259,6 +260,7 @@ architecture control_arc of control is
                     s_WE_program_counter <= '0';
                     sc_WE_memory <= '0';
                     sc_WE_instruction_reg <= '0';
+                    sc_WE_data_reg <= '1';
 
 
                     sc_WE_reg_file <= '0';
@@ -297,6 +299,7 @@ architecture control_arc of control is
                         when '1' =>
                             sc_pc_src <= "10";
                             sc_rar <= '1';
+                            s_WE_program_counter <= '1';
 
                         when others =>
                             sc_pc_src <= "00";
@@ -317,6 +320,7 @@ architecture control_arc of control is
 
 
                     sc_WE_reg_file <= '0';
+                    sc_WE_data_reg <= '1';
 
                     sc_alu_src_A <= '1';
                     sc_mem_to_reg <= '0';
@@ -352,6 +356,7 @@ architecture control_arc of control is
                         when '1' =>
                             sc_pc_src <= "10";
                             sc_rar <= '1';
+                            s_WE_program_counter <= '1';
 
                         when others =>
                             sc_pc_src <= "00";
@@ -411,6 +416,7 @@ architecture control_arc of control is
                         when '1' =>
                             sc_pc_src <= "10";
                             sc_rar <= '1';
+                            s_WE_program_counter <= '1';
 
                         when others =>
                             sc_pc_src <= "00";
@@ -470,6 +476,7 @@ architecture control_arc of control is
                         when '1' =>
                             sc_pc_src <= "10";
                             sc_rar <= '1';
+                            s_WE_program_counter <= '1';
 
                         when others =>
                             sc_pc_src <= "00";
@@ -505,6 +512,7 @@ architecture control_arc of control is
                         when '1' =>
                             sc_pc_src <= "10";
                             sc_rar <= '1';
+                            s_WE_program_counter <= '1';
 
                         when others =>
                             sc_pc_src <= "00";
