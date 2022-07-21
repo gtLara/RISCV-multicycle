@@ -36,6 +36,7 @@ architecture riscv_arc of riscv is
             sc_WE_data : out std_logic ;
             sc_WE_program_counter : out std_logic ;
             sc_WE_memory : out std_logic ;
+            sc_WE_data_reg : out std_logic ;
             sc_WE_instruction_reg : out std_logic ;
             sc_WE_reg_file : out std_logic ;
             sc_alu_src_A : out std_logic ;
@@ -58,8 +59,8 @@ architecture riscv_arc of riscv is
                 original_instruction_address : in std_logic_vector(11 downto 0);
                 interruption_enable_write : in std_ulogic_vector(n_peripherals - 1 downto 0);
                 sc_rar : in std_logic;
-                interrupt_flag : in std_logic;
             -- out
+                interrupt_flag : out std_ulogic;
                 interruption_enable_read : out std_ulogic_vector(n_peripherals - 1 downto 0);
                 return_address : out std_logic_vector(11 downto 0);
                 isr_address : out std_ulogic_vector(11 downto 0)
@@ -198,6 +199,7 @@ architecture riscv_arc of riscv is
 
     signal sc_IorD : std_logic ;
     signal sc_WE_data : std_logic ;
+    signal sc_WE_data_reg : std_logic ;
     signal sc_WE_program_counter : std_logic ;
     signal sc_WE_memory : std_logic ;
     signal sc_WE_instruction_reg : std_logic ;
@@ -343,6 +345,7 @@ architecture riscv_arc of riscv is
 
                                 sc_IorD => sc_IorD,
                                 sc_WE_data => sc_WE_data,
+                                sc_WE_data_reg => sc_WE_data_reg,
                                 sc_WE_program_counter => sc_WE_program_counter,
                                 sc_WE_memory => sc_WE_memory,
                                 sc_WE_instruction_reg => sc_WE_instruction_reg,
@@ -359,12 +362,12 @@ architecture riscv_arc of riscv is
     u_interruption_handler: interruption_handler port map (
                 clk => clk,
                 ack => '0',
-                interrupt_flag => s_interrupt_flag,
                 interruption_requests => interruption_requests,
                 original_instruction_address => s_current_instruction_address,
                 interruption_enable_write => s_interruption_enable_write,
                 sc_rar => sc_rar,
                 interruption_enable_read => s_interruption_enable_read,
+                interrupt_flag => s_interrupt_flag,
                 return_address => s_return_address,
                 isr_address => s_isr_address
             );
@@ -394,7 +397,7 @@ architecture riscv_arc of riscv is
                                                    );
 
     u_data_register: register_block port map(
-                                            we => '1',
+                                            we => sc_WE_data_reg,
                                             next_input => s_stored_instruction,
                                             clk => clk,
                                             last_input => s_data_register_output
