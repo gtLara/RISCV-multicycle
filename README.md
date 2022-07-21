@@ -1,6 +1,7 @@
 # RISCV-multycicle
 
-![riscv](https://img.shields.io/github/languages/top/gtLara/RISCV-multicycle?color=green&label=VHDL)![Itype](https://img.shields.io/badge/ISA-Itype-blueviolet)![Itype](https://img.shields.io/badge/ISA-Rtype-blueviolet)
+![riscv](https://img.shields.io/github/languages/top/gtLara/RISCV-multicycle?color=green&label=VHDL)![Itype](https://img.shields.io/badge/Instructions-Itype-blueviolet)![Itype](https://img.shields.io/badge/Instructions-Rtype-blueviolet)![Itype](https://img.shields.io/badge/Instructions-Stype-blueviolet)![Itype](https://img.shields.io/badge/ISA-RISCV-violet)
+
 
 Uma implementação experimental do conjunto de instruções RISC-V em multiciclo.
 Desenvolvimento iniciado para matéria Laboratório e Arquitetura e Organização
