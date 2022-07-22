@@ -127,6 +127,8 @@ endereços da ISR. Isso foi feito com intuito de simplificar o projeto e pelo
 fato da camada adicional de indireção não ser tão necessária nesse contexto -
 onde o posicionamento das ISRs pode ser mantido constante.
 
+![controladora](imagens/controladora.jpg?raw=true)
+
 A parte central da controladora é o [módulo de resolução de prioridades](componentes),
 fornecido pelo professor. Esse componente resolve prioridade em um vetor
 binário filtrando a entrada para produzir uma saída que prioriza o bit menos
@@ -216,10 +218,25 @@ que proposto no roteiro, sendo usado apenas como um temporizador e não um
 contador. Nesse periférico o limite da contagem é armazenado em um registrador
 a qual o usuário tem acesso.
 
-
 ### GPIO
 
+O periférico GPIO foi desenvolvido no arquivo correspondente. Os sinais
+do testbench associado são ilustrados pela figura a seguir.
+
+![gpiotb](imagens/gpio_tb.png?raw=true)
+
 ### UART
+
+O periférico UART é composto por um módulo emissor e um receptor.
+A transmissão de dados é serial, convertendo um vetor de bits em uma
+transmissão serial de dados correspondendo a esses bits. Essa conversão
+paralelo-serial é realizada para transmissão de dados em um canal unificado.
+
+Uma visualização do testbench desenvolvido para o periférico é ilustrado abaixo,
+no qual se observa a transmissão de dados serial.
+
+![timertb](imagens/uart_tb.png?raw=true)
+
 
 ### Integração de Periféricos
 
@@ -247,6 +264,12 @@ como explicado anteriormente.
 
 ![timerintegrationtb](imagens/timer_integration_tb.png?raw=true)
 
-### Notas sobre integração de periféricos e interrupções
+### Notas sobre sintetização
 
-## Observações Finais
+Todos os periféricos implementados, assim como sua integração com a CPU, foram
+testados em FPGA, alguns sem sucesso (como UART e GPIO) e alguns com sucesso
+(timer e controladora de interrupções). Note que UART obteve sucesso parcial
+quando simulado por si, exceto por alguns erros de transmissão ocasionais.
+Um teste em FPGA do timer e da CPU foram inclusos em vídeo na pasta de vídeos
+desse repositório. A CPU sintetizada incluía controladora de interrupções
+integrada, mas nenhum periférico declarado.
