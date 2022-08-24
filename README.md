@@ -218,11 +218,6 @@ que proposto no roteiro, sendo usado apenas como um temporizador e não um
 contador. Nesse periférico o limite da contagem é armazenado em um registrador
 a qual o usuário tem acesso.
 
-### GPIO
-
-O periférico GPIO foi desenvolvido no arquivo correspondente. Os sinais
-do testbench associado são ilustrados pela figura a seguir.
-
 ![gpiotb](imagens/gpio_tb.png?raw=true)
 
 ### UART
